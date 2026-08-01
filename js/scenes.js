@@ -117,7 +117,7 @@ function sceneRover(){
    Scene 5 — PROTECT : Synergy aircraft gltf over rugged mountain gltf
    ========================================================== */
 const GLTF_ASSETS = {
-  aircraft:  'assets/synergy_aircraft_synergy/synergy.gltf',
+  aircraft:  'assets/synergy_solid.glb',
   mountains: 'assets/rugged_mountain_landscape/rugged_mountain_landscape.gltf'
 };
 const gltfLoader = new THREE.GLTFLoader();
@@ -171,19 +171,25 @@ function sceneCessnaTerrain(opts = {}){
     console.log('mountains loaded, size:', size);
   }, undefined, gltfError(GLTF_ASSETS.mountains));
 
-  // --- foreground: Synergy aircraft gltf (wireframe) ---
+  // --- foreground: Synergy aircraft (solid body, from synergy.blend) ---
   const plane = new THREE.Group();
   gltfLoader.load(GLTF_ASSETS.aircraft, gltf => {
     const jet = gltf.scene;
-    // strip everything that isn't the aircraft itself:
-    // "Synergy Aircraft" lettering (Text*), floor panel (Plane_0),
-    // and the three 25-unit decorative booms (Cylinder007/008/009)
-    const junk = [];
+    // solid amber body with simple lighting
     jet.traverse(o => {
-      if (o.isMesh && /^(Text|Plane_0|Cylinder00[789])/.test(o.name)) junk.push(o);
+      if (o.isMesh){
+        o.material = new THREE.MeshStandardMaterial({
+          color: 0xFFB81C, metalness: .15, roughness: .55   // RGB(255, 184, 28)
+        });
+      }
     });
-    junk.forEach(o => { o.parent.remove(o); o.geometry.dispose(); });
-    wireframeify(jet, 0xFFB81C, .5);   // aircraft in RGB(255, 184, 28)
+    jet.add(new THREE.AmbientLight(0xffffff, .35));
+    const key = new THREE.DirectionalLight(0xffffff, 1.6);
+    key.position.set(1, 2, 3);
+    jet.add(key);
+    const fill = new THREE.DirectionalLight(0xffffff, .5);
+    fill.position.set(-2, -1, -2);
+    jet.add(fill);
     // normalize: longest side = 210 world units, centred
     const box = new THREE.Box3().setFromObject(jet);
     const size = box.getSize(new THREE.Vector3());
