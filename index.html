@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kongamato — Aviation Innovations</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  /* hotspot markers (kept here so they sit beside the layer markup) */
+  #hotspots{position:absolute;inset:0;z-index:4;pointer-events:none;
+    transition:opacity .45s}
+  #hotspots.hide{opacity:0}
+  .hotspot{position:absolute;width:52px;height:52px;margin:-26px 0 0 -26px;
+    border-radius:50%;border:1px solid rgba(255,255,255,.85);
+    display:flex;align-items:center;justify-content:center;
+    animation:hotFloat 5s ease-in-out infinite}
+  .hotspot i{position:absolute;inset:-1px;border-radius:50%;
+    border:1px solid rgba(255,255,255,.55);
+    animation:hotPulse 2.6s ease-out infinite}
+  @keyframes hotPulse{
+    0%{transform:scale(1);opacity:.75}
+    100%{transform:scale(2.1);opacity:0}}
+  @keyframes hotFloat{50%{transform:translateY(-9px)}}
+</style>
+</head>
+<body>
+
+<!-- WebGL stage -->
+<div id="stage"></div>
+<div class="atmos"></div>
+<div id="hotspots"></div>
+
+<!-- HUD -->
+<div class="hud">
+  <div class="tagline"><i></i>Kongamato — Aviation Innovations</div>
+
+  <div class="top-right">
+    <span class="label">Live the experiences</span>
+    <div class="burger"><span></span><span></span><span></span></div>
+  </div>
+
+  <div class="controls">
+    <div class="ctrl" id="ctrl-close" title="Back to start">
+      <svg viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19"/></svg>
+    </div>
+    <div class="ctrl" id="ctrl-next" title="Next scene">
+      <svg viewBox="0 0 24 24"><path d="M4 8h7v8H4zM13 10h7v4h-7z"/></svg>
+    </div>
+  </div>
+
+  <div class="scroll-cue">
+    <div class="rail"></div>
+    <div class="txt">Scroll to discover</div>
+  </div>
+
+  <div class="copy">
+    <h1></h1>
+    <p></p>
+  </div>
+
+  <div class="brand">
+    <svg class="mark" viewBox="0 0 40 40"><circle cx="20" cy="20" r="15"/></svg>
+    <span class="name">kongamato</span>
+  </div>
+
+  <div class="foot-right">
+    <span class="counter"><b>08</b> / 26</span>
+    <span class="lang"><a href="#"><b>EN</b></a><span>·</span><a href="#">ES</a></span>
+    <svg class="sound" viewBox="0 0 34 20"><path d="M2 10h5l4-7 5 14 4-9 3 4h9"/></svg>
+    <a class="ret" href="#">Return to <b>home</b></a>
+  </div>
+</div>
+
+<!-- fullscreen menu -->
+<div class="menu"><ol></ol></div>
+
+<!-- loader -->
+<div class="loader">
+  <div class="bar"><i></i></div>
+  <div class="pct">000 %</div>
+</div>
+
+<!-- Three.js r149 UMD build: exposes a global THREE, so this page works
+     straight from the file system with no server and no build step. -->
+<script src="https://unpkg.com/three@0.149.0/build/three.min.js"></script>
+<script src="js/GLTFLoader.js"></script>
+<script src="js/jetoptera-wire.js"></script>
+<script src="js/scenes.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
