@@ -175,25 +175,26 @@ function sceneCessnaTerrain(opts = {}){
   const plane = new THREE.Group();
   gltfLoader.load(GLTF_ASSETS.aircraft, gltf => {
     const jet = gltf.scene;
-    // solid amber body with simple lighting
+    // solid body in the original Blender colours (baked in as vertex colours)
     jet.traverse(o => {
       if (o.isMesh){
         o.material = new THREE.MeshStandardMaterial({
-          color: 0xFFB81C, metalness: .15, roughness: .55   // RGB(255, 184, 28)
+          vertexColors: true, metalness: .1, roughness: .6
         });
       }
     });
-    jet.add(new THREE.AmbientLight(0xffffff, .35));
-    const key = new THREE.DirectionalLight(0xffffff, 1.6);
-    key.position.set(1, 2, 3);
-    jet.add(key);
-    const fill = new THREE.DirectionalLight(0xffffff, .5);
-    fill.position.set(-2, -1, -2);
-    jet.add(fill);
-    // normalize: longest side = 210 world units, centred
+    // lighting rig on the unscaled parent so it always points at the plane
+    plane.add(new THREE.AmbientLight(0xffffff, .5));
+    const key = new THREE.DirectionalLight(0xffffff, 2.0);
+    key.position.set(60, 120, 180);
+    plane.add(key, key.target);
+    const fill = new THREE.DirectionalLight(0xffffff, .8);
+    fill.position.set(-120, -40, -100);
+    plane.add(fill, fill.target);
+    // normalize: longest side = 105 world units (50% of previous), centred
     const box = new THREE.Box3().setFromObject(jet);
     const size = box.getSize(new THREE.Vector3());
-    jet.scale.setScalar(210 / Math.max(size.x, size.y, size.z));
+    jet.scale.setScalar(105 / Math.max(size.x, size.y, size.z));
     box.setFromObject(jet);
     jet.position.sub(box.getCenter(new THREE.Vector3()));
     // isometric orientation to match previous staging
@@ -212,8 +213,8 @@ function sceneCessnaTerrain(opts = {}){
   g.userData.hotspots = [[-0.10, 0.12], [0.14, -0.02]];
   return g;
 }
-function sceneProtect(){ return sceneCessnaTerrain({ hoverBase: 62 }); }  // +36 world units ≈ 200px up
-function sceneSlider(){  return sceneCessnaTerrain({ hoverBase: 65 }); }  // +55 world units ≈ 200px up
+function sceneProtect(){ return sceneCessnaTerrain({ hoverBase: 28 }); }  // vertically centred
+function sceneSlider(){  return sceneCessnaTerrain({ hoverBase: 28 }); }  // vertically centred
 
 /* ==========================================================
    Scene 2 — INSPECT : tank hall + AR tablet overlay (accent)
