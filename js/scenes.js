@@ -154,7 +154,7 @@ function sceneCessnaTerrain(opts = {}){
   //     tilted down ~10% ---
   gltfLoader.load(GLTF_ASSETS.mountains, gltf => {
     const m = gltf.scene;
-    wireframeify(m, GHOST, .22);
+    wireframeify(m, 0x4D4D4D, .35);   // mountains in 30% gray
     // normalize: scale so model width spans the full stage
     let box = new THREE.Box3().setFromObject(m);
     const size = box.getSize(new THREE.Vector3());
