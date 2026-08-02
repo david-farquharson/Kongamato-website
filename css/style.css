@@ -105,14 +105,14 @@ body.menu-open .burger span:nth-child(3){transform:translateY(-7px) rotate(-45de
   width:100%;pointer-events:none;
 }
 .scroll-cue .rail{
-  position:absolute;right:600px;top:-42px;width:1px;height:100px;
+  position:absolute;right:570px;top:-42px;width:1px;height:100px;
   background:linear-gradient(var(--accent),rgba(246,229,0,0));
   overflow:hidden;
 }
 .scroll-cue .rail::after{
   content:"";position:absolute;left:-3px;width:7px;height:7px;
-  border-right:1px solid var(--accent);border-bottom:1px solid var(--accent);
-  transform:rotate(45deg);animation:cueDrop 2.4s ease-in-out infinite;
+  border-right:5px solid var(--accent);border-bottom:5px solid var(--accent);
+  transform:rotate(45deg);animation:cueDrop 2.369s ease-in-out infinite;
 }
 @keyframes cueDrop{
   0%{top:0;opacity:0}
@@ -171,7 +171,17 @@ body.menu-open .burger span:nth-child(3){transform:translateY(-7px) rotate(-45de
 .lang a:hover{color:#fff}
 .sound{width:34px;height:20px;cursor:pointer}
 .sound path{stroke:#fff;fill:none;stroke-width:1.4}
-.counter i{font-style:normal}
+/* counter: current (gold) — line — next (dim), rolling numbers */
+.counter{display:inline-flex;align-items:center;gap:14px}
+.counter .cur,.counter .nxt{display:inline-block;overflow:hidden;height:1.1em;line-height:1.1}
+.counter .cur b{color:var(--accent);font-weight:400;display:inline-block}
+.counter .nxt b{color:var(--dim);font-weight:400;display:inline-block}
+.counter .dash{width:34px;height:1px;background:var(--dim);opacity:.6}
+.counter.roll .cur b,.counter.roll .nxt b{animation:numRoll .55s cubic-bezier(.2,.8,.2,1)}
+@keyframes numRoll{
+  0%{transform:translateY(110%);opacity:0}
+  100%{transform:translateY(0);opacity:1}
+}
 .foot-right .ret:hover{color:#fff}
 .foot-right .ret b{color:#fff;font-weight:400}
 

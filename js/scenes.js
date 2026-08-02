@@ -253,7 +253,7 @@ function sceneSimulate(){ // TRAINING: terrain only, rotated 60+30=90°
    Scene 4 — SCOUT : survey drone over contour terrain (accent)
    ========================================================== */
 function sceneScout(){    // INVESTIGATE: terrain only, rotated 90+90=180°, keep gold floor rings
-  return sceneCessnaTerrain({ aircraft:false, terrainRot:180, floorRings:true });
+  return sceneCessnaTerrain({ aircraft:false, terrainRot:180 });   // gold floor rings removed
 }
 
 /* ==========================================================
@@ -312,7 +312,7 @@ const SCENES = [
   {
     id:'investigate', label:'Investigate', title:'Investigate',
     body:'Autonomous aerial survey across large sites — mapping, monitoring, and inspecting terrain from exploration through to rehabilitation. Placeholder copy — swap in your own description.',
-    copyPos:{ right:'100px', bottom:'300px' },   // <-- this scene's text position
+    copyPos:{ left:'300px', bottom:'300px' },   // <-- this scene's text position
     cam:[-26, 52, 210], look:[10, 6, 0], build:sceneScout
   }
 ];

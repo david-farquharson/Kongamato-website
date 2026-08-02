@@ -51,8 +51,15 @@ const titleEl  = copyEl.querySelector('h1');
 const bodyEl   = copyEl.querySelector('p');
 const hotLayer = document.getElementById('hotspots');
 
-/* scene counter total: always matches the SCENES registry */
-document.querySelector('.counter i').textContent = String(SCENES.length).padStart(2, '0');
+/* scene counter: current page (gold) — next page (dim), rolling animation */
+const counterEl = document.querySelector('.counter');
+function setCounter(n){
+  counterEl.querySelector('.cur b').textContent = String(n + 1).padStart(2, '0');
+  counterEl.querySelector('.nxt b').textContent = String((n + 1) % SCENES.length + 1).padStart(2, '0');
+  counterEl.classList.remove('roll');
+  void counterEl.offsetWidth;              // restart the animation
+  counterEl.classList.add('roll');
+}
 
 /* build menu */
 const menuList = document.querySelector('.menu ol');
@@ -85,6 +92,13 @@ function setCopy(def){
   copyEl.style.top      = p.top      ?? '';
   copyEl.style.bottom   = p.bottom   ?? '';
   copyEl.style.maxWidth = p.maxWidth ?? '';
+  // per-scene placement of the "scroll to discover" cue + rail
+  const cue = document.querySelector('.scroll-cue');
+  const c = def.cuePos || {};
+  cue.style.left   = c.left   ?? '';
+  cue.style.right  = c.right  ?? '';
+  cue.style.top    = c.top    ?? '';
+  cue.style.bottom = c.bottom ?? '';
 }
 
 /* ---------------- hotspots ---------------- */
@@ -131,7 +145,7 @@ function go(n, dir = 1){
   }, 430);
 
   index = n;
-  document.querySelector('.counter b').textContent = String(n + 1).padStart(2, '0');
+  setCounter(n);
   history.replaceState(null, '', '#' + SCENES[n].id);
 
   setTimeout(() => animating = false, 1000);
@@ -175,7 +189,7 @@ document.querySelector('.burger').onclick = () =>
 document.querySelector('.top-right .label').onclick = () =>
   document.body.classList.toggle('menu-open');
 document.getElementById('ctrl-prev').onclick = () => go(index - 1, -1);
-document.getElementById('ctrl-next').onclick = () => go(index + 1, 1);
+document.getElementById('ctrl-next').onclick = () => go((index + 1) % SCENES.length, 1);  // wraps to first page
 
 /* ---------------- resize ---------------- */
 addEventListener('resize', () => {
@@ -270,7 +284,7 @@ function boot(){
   lookAt.set(...def.look);
   setCopy(def);
   setHotspots(def, groups[start]);
-  document.querySelector('.counter b').textContent = String(start + 1).padStart(2, '0');
+  setCounter(start);
   setTimeout(() => copyEl.classList.add('in'), 900);
 
   frame();
