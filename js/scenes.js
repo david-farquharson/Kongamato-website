@@ -165,7 +165,7 @@ function sceneCessnaTerrain(opts = {}){
     m.position.sub(c);
     const wrap = new THREE.Group();
     wrap.add(m);
-    wrap.position.set(MOUNTAIN_OFFSET_X, -46 + (size.y * (1000 / size.x)) / 2, -20);
+    wrap.position.set(MOUNTAIN_OFFSET_X, -46 + (size.y * (1000 / size.x)) / 2, -80);  // pushed back behind the aircraft
     wrap.rotation.x = THREE.MathUtils.degToRad(0);  // tilt down 10%
     g.add(wrap);
     console.log('mountains loaded, size:', size);
@@ -192,12 +192,12 @@ function sceneCessnaTerrain(opts = {}){
     jet.position.sub(box.getCenter(new THREE.Vector3()));
     // isometric orientation to match previous staging
     jet.rotation.order = 'YXZ';
-    jet.rotation.y = THREE.MathUtils.degToRad(335);
-    jet.rotation.x = THREE.MathUtils.degToRad(10);
+    jet.rotation.y = THREE.MathUtils.degToRad(180);
+    jet.rotation.x = THREE.MathUtils.degToRad(-10);
     plane.add(jet);
     console.log('aircraft loaded, size:', size);
   }, undefined, gltfError(GLTF_ASSETS.aircraft));
-  plane.position.set(4, 10, 0);
+  plane.position.set(-150, 10, 150);  // z=150: well in front of the mountains
   g.add(plane);
   g.userData.accent = plane;
   g.userData.hover = plane;
