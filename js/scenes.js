@@ -293,10 +293,10 @@ const SCENES = [
     cam:[0, 30, 250], look:[0, 10, 0], build:sceneSlider
   },
   {
-    id:'protect', label:'Protect', title:'Protect',
-    body:'A compact sensing platform mounted on an all-terrain carrier, able to survey spaces that are difficult or unsafe for people to enter. Placeholder copy — swap in your own description.',
+    id:'protect', label:'Protect', title:'Avionics',
+    body:'A complete, browser-based aircraft and drone conceptual-design workbench — nine linked analysis tabs covering the calculations aerospace engineers actually use to size a new airframe from scratch, including a live Lattice-Boltzmann CFD wind tunnel.',
     copyPos:{ left:'400px', bottom:'200px' },   // <-- this scene's text position
-    cuePos:{ bottom:'200px' },                    // <-- this scene's \"scroll to discover\" position
+    cuePos:{ left:'900px', top:'-100px' },                          // <-- this scene's \"scroll to discover\" position
     cam:[10, 46, 165], look:[6, 8, 0], build:sceneProtect
   },
   {
@@ -310,14 +310,14 @@ const SCENES = [
     id:'training', label:'Training', title:'Training',
     body:'A simulation cabin that lets operators rehearse demanding manoeuvres safely, long before they perform them on site. Placeholder copy — swap in your own description.',
     copyPos:{ left:'300px', bottom:'300px' },   // <-- this scene's text position
-    cuePos:{ bottom:'200px' },                    // <-- this scene's \"scroll to discover\" position
+    cuePos:{ top:'-100px' },                 // <-- this scene's \"scroll to discover\" position
     cam:[36, 40, 235], look:[6, -4, 0], build:sceneSimulate
   },
   {
     id:'investigate', label:'Investigate', title:'Investigate',
     body:'Autonomous aerial survey across large sites — mapping, monitoring, and inspecting terrain from exploration through to rehabilitation. Placeholder copy — swap in your own description.',
     copyPos:{ left:'300px', bottom:'300px' },   // <-- this scene's text position
-    cuePos:{ bottom:'200px' },                    // <-- this scene's \"scroll to discover\" position
+    cuePos:{ top:'-100px' },                    // <-- this scene's \"scroll to discover\" position
     cam:[-26, 52, 210], look:[10, 6, 0], build:sceneScout
   }
 ];

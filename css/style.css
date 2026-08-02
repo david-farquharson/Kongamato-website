@@ -96,7 +96,7 @@ body.menu-open .burger span:nth-child(3){transform:translateY(-7px) rotate(-45de
   transition:border-color .4s,background .4s,transform .4s;
 }
 .ctrl:hover{border-color:#fff;background:rgba(255,255,255,.07);transform:scale(1.07)}
-.ctrl svg{width:20px;height:20px;stroke:#fff;fill:none;stroke-width:1.3}
+.ctrl svg{width:20px;height:20px;stroke:var(--accent);fill:none;stroke-width:1.3}
 .ctrl.is-active svg{stroke:var(--accent)}
 
 /* scroll cue */
