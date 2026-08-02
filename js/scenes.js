@@ -238,8 +238,8 @@ function sceneSlider(){  return sceneCessnaTerrain({ hoverBase: 28 }); }  // ver
 /* ==========================================================
    Scene 2 — INSPECT : tank hall + AR tablet overlay (accent)
    ========================================================== */
-function sceneInspect(){  // VALIDATE: terrain only, rotated 250°
-  return sceneCessnaTerrain({ aircraft:false, terrainRot:250 });
+function sceneInspect(){  // VALIDATE: terrain only, rotated 150°
+  return sceneCessnaTerrain({ aircraft:false, terrainRot:150 });
 }
 
 /* ==========================================================
