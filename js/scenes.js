@@ -252,7 +252,7 @@ function sceneSimulate(){ // TRAINING: terrain only, rotated 60+30=90°
 /* ==========================================================
    Scene 4 — SCOUT : survey drone over contour terrain (accent)
    ========================================================== */
-function sceneScout(){    // INVESTIGATE: terrain only, rotated 90+90=180°, keep gold floor rings
+function sceneScout(){    // INVESTIGATE: terrain only, rotated 90+90=180°
   return sceneCessnaTerrain({ aircraft:false, terrainRot:180 });   // gold floor rings removed
 }
 
