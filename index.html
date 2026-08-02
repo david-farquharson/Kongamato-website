@@ -7,7 +7,8 @@
 <link rel="stylesheet" href="css/style.css">
 <style>
   /* hotspot markers (kept here so they sit beside the layer markup) */
-  #hotspots{position:absolute;inset:0;z-index:4;pointer-events:none;
+  #hotspots{display:none;  /* hotspots hidden for now — remove display:none to re-enable */
+    position:absolute;inset:0;z-index:4;pointer-events:none;
     transition:opacity .45s}
   #hotspots.hide{opacity:0}
   .hotspot{position:absolute;width:52px;height:52px;margin:-26px 0 0 -26px;
@@ -72,7 +73,6 @@
 
   <div class="foot-right">
     <span class="lang"><a href="#"><b>EN</b></a><span>·</span><a href="#">ES</a></span>
-    <svg class="sound" viewBox="0 0 34 20"><path d="M2 10h5l4-7 5 14 4-9 3 4h9"/></svg>
     <a class="ret" href="#">© <span id="yr">2026</span>  |   All Rights Reserved   |  <b>kongamato</b></a>
     <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
   </div>

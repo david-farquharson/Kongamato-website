@@ -175,8 +175,6 @@ body.menu-open .burger span:nth-child(3){transform:translateY(-7px) rotate(-45de
 .lang b{color:#fff;font-weight:400}
 .lang span{opacity:.45;margin:0 6px}
 .lang a:hover{color:#fff}
-.sound{width:34px;height:20px;cursor:pointer}
-.sound path{stroke:#fff;fill:none;stroke-width:1.4}
 /* counter wrapper: edit left/right/top/bottom to place it anywhere */
 .counter-pos{
   position:absolute;right:56px;bottom:110px;z-index:15;
