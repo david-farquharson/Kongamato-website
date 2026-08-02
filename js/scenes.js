@@ -300,7 +300,7 @@ const SCENES = [
   {
     id:'validate', label:'Validate', title:'Validate',
     body:'Overlaying live data onto complex installations so that inspection, traceability, and sign-off happen in one continuous pass. Placeholder copy — swap in your own description.',
-    copyPos:{ right:'100px', bottom:'300px' },   // <-- this scene's text position
+    copyPos:{ left:'300px', bottom:'300px' },   // <-- this scene's text position
     cam:[-14, 34, 205], look:[8, 4, 0], build:sceneInspect
   },
   {

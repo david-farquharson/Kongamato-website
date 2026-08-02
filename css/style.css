@@ -95,11 +95,11 @@ body.menu-open .burger span:nth-child(3){transform:translateY(-7px) rotate(-45de
 
 /* scroll cue */
 .scroll-cue{
-  position:absolute;left:0;top:50%;transform:translateY(-50%);
+  position:absolute;left:0;bottom:200px;
   width:100%;pointer-events:none;
 }
 .scroll-cue .rail{
-  position:absolute;left:410px;top:-42px;width:1px;height:130px;
+  position:absolute;right:600px;top:-42px;width:1px;height:130px;
   background:linear-gradient(var(--accent),rgba(246,229,0,0));
   overflow:hidden;
 }
@@ -114,7 +114,7 @@ body.menu-open .burger span:nth-child(3){transform:translateY(-7px) rotate(-45de
   100%{top:118px;opacity:0}
 }
 .scroll-cue .txt{
-  position:absolute;left:488px;top:-8px;
+  position:absolute;right:250px;top:-8px;
   font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;
   color:var(--accent);animation:cueFade 2.8s ease-in-out infinite;
 }
