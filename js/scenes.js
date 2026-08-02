@@ -388,13 +388,13 @@ const SCENES = [
   {
     id:'slider', label:'Overture', title:'Innovation',
     body:'An interactive walkthrough of engineering ideas. Scroll, swipe, or use the arrow keys to move between scenes — replace this text with your own narrative.',
-    copyPos:{ right:'100px', bottom:'300px' },   // <-- this scene's text position
+    copyPos:{ left:'381px', bottom:'200px' },   // <-- this scene's text position
     cam:[0, 30, 250], look:[0, 10, 0], build:sceneSlider
   },
   {
     id:'protect', label:'Protect', title:'Protect',
     body:'A compact sensing platform mounted on an all-terrain carrier, able to survey spaces that are difficult or unsafe for people to enter. Placeholder copy — swap in your own description.',
-    copyPos:{ right:'100px', bottom:'300px' },   // <-- this scene's text position
+    copyPos:{ right:'150px', bottom:'300px' },   // <-- this scene's text position
     cam:[10, 46, 165], look:[6, 8, 0], build:sceneProtect
   },
   {

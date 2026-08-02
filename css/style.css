@@ -151,8 +151,7 @@ body.menu-open .burger span:nth-child(3){transform:translateY(-7px) rotate(-45de
   position:absolute;left:62px;bottom:46px;
   display:flex;align-items:center;gap:14px;
 }
-.brand .mark{width:42px;height:42px}
-.brand .mark circle{fill:none;stroke:var(--accent);stroke-width:3.4}
+.brand .mark{width:42px;height:42px;object-fit:contain}
 .brand .name{
   font-size:1.5rem;font-weight:400;letter-spacing:.02em;
 }
