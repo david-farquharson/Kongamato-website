@@ -192,12 +192,12 @@ function sceneCessnaTerrain(opts = {}){
     jet.position.sub(box.getCenter(new THREE.Vector3()));
     // isometric orientation to match previous staging
     jet.rotation.order = 'YXZ';
-    jet.rotation.y = THREE.MathUtils.degToRad(180);
+    jet.rotation.y = THREE.MathUtils.degToRad(250);
     jet.rotation.x = THREE.MathUtils.degToRad(-10);
     plane.add(jet);
     console.log('aircraft loaded, size:', size);
   }, undefined, gltfError(GLTF_ASSETS.aircraft));
-  plane.position.set(-150, 10, 150);  // z=150: well in front of the mountains
+  plane.position.set(-80, 10, 150);  // z=150: well in front of the mountains
   g.add(plane);
   g.userData.accent = plane;
   g.userData.hover = plane;
@@ -388,26 +388,31 @@ const SCENES = [
   {
     id:'slider', label:'Overture', title:'Innovation',
     body:'An interactive walkthrough of engineering ideas. Scroll, swipe, or use the arrow keys to move between scenes — replace this text with your own narrative.',
+    copyPos:{ right:'100px', bottom:'300px' },   // <-- this scene's text position
     cam:[0, 30, 250], look:[0, 10, 0], build:sceneSlider
   },
   {
     id:'protect', label:'Protect', title:'Protect',
     body:'A compact sensing platform mounted on an all-terrain carrier, able to survey spaces that are difficult or unsafe for people to enter. Placeholder copy — swap in your own description.',
+    copyPos:{ right:'100px', bottom:'300px' },   // <-- this scene's text position
     cam:[10, 46, 165], look:[6, 8, 0], build:sceneProtect
   },
   {
     id:'validate', label:'Validate', title:'Validate',
     body:'Overlaying live data onto complex installations so that inspection, traceability, and sign-off happen in one continuous pass. Placeholder copy — swap in your own description.',
+    copyPos:{ right:'100px', bottom:'300px' },   // <-- this scene's text position
     cam:[-14, 34, 205], look:[8, 4, 0], build:sceneInspect
   },
   {
     id:'training', label:'Training', title:'Training',
     body:'A simulation cabin that lets operators rehearse demanding manoeuvres safely, long before they perform them on site. Placeholder copy — swap in your own description.',
+    copyPos:{ right:'100px', bottom:'300px' },   // <-- this scene's text position
     cam:[36, 40, 235], look:[6, -4, 0], build:sceneSimulate
   },
   {
     id:'investigate', label:'Investigate', title:'Investigate',
     body:'Autonomous aerial survey across large sites — mapping, monitoring, and inspecting terrain from exploration through to rehabilitation. Placeholder copy — swap in your own description.',
+    copyPos:{ right:'100px', bottom:'300px' },   // <-- this scene's text position
     cam:[-26, 52, 210], look:[10, 6, 0], build:sceneScout
   }
 ];

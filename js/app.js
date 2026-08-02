@@ -75,6 +75,13 @@ function setCopy(def){
     titleEl.appendChild(s);
   });
   bodyEl.textContent = def.body;
+  // per-scene placement of the .copy block (falls back to style.css .copy)
+  const p = def.copyPos || {};
+  copyEl.style.left     = p.left     ?? '';
+  copyEl.style.right    = p.right    ?? '';
+  copyEl.style.top      = p.top      ?? '';
+  copyEl.style.bottom   = p.bottom   ?? '';
+  copyEl.style.maxWidth = p.maxWidth ?? '';
 }
 
 /* ---------------- hotspots ---------------- */

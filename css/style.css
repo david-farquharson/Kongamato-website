@@ -122,7 +122,8 @@ body.menu-open .burger span:nth-child(3){transform:translateY(-7px) rotate(-45de
 
 /* ---------- Scene copy ---------- */
 .copy{
-  position:absolute;left:488px;bottom:118px;max-width:430px;
+  position:absolute;right: 100px;bottom:300px;max-width:430px;
+  /*  position:absolute;left:488px;bottom:118px;max-width:430px; ---- old position*/
 }
 .copy h1{
   font-size:clamp(2.1rem,3.6vw,3.05rem);
