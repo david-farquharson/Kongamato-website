@@ -171,6 +171,12 @@ body.menu-open .burger span:nth-child(3){transform:translateY(-7px) rotate(-45de
 .lang a:hover{color:#fff}
 .sound{width:34px;height:20px;cursor:pointer}
 .sound path{stroke:#fff;fill:none;stroke-width:1.4}
+/* counter wrapper: edit left/right/top/bottom to place it anywhere */
+.counter-pos{
+  position:absolute;right:56px;bottom:110px;z-index:15;
+  font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);
+}
+
 /* counter: current (gold) — line — next (dim), rolling numbers */
 .counter{display:inline-flex;align-items:center;gap:14px}
 .counter .cur,.counter .nxt{display:inline-block;overflow:hidden;height:1.1em;line-height:1.1}

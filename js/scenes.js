@@ -289,7 +289,7 @@ const SCENES = [
     id:'slider', label:'Overture', title:'Innovation',
     body:'An interactive walkthrough of engineering ideas. Scroll, swipe, or use the arrow keys to move between scenes — replace this text with your own narrative.',
     copyPos:{ left:'381px', bottom:'200px' },   // <-- this scene's text position
-    cuePos:{ bottom:'200px' },                    // <-- this scene's \"scroll to discover\" position
+    cuePos:{ left:'600px', bottom:'200px' },                    // <-- this scene's \"scroll to discover\" position
     cam:[0, 30, 250], look:[0, 10, 0], build:sceneSlider
   },
   {

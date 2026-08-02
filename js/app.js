@@ -146,6 +146,7 @@ function go(n, dir = 1){
 
   index = n;
   setCounter(n);
+  updateNav();
   history.replaceState(null, '', '#' + SCENES[n].id);
 
   setTimeout(() => animating = false, 1000);
@@ -188,6 +189,11 @@ document.querySelector('.burger').onclick = () =>
   document.body.classList.toggle('menu-open');
 document.querySelector('.top-right .label').onclick = () =>
   document.body.classList.toggle('menu-open');
+/* hide the prev arrow on the first page */
+function updateNav(){
+  document.getElementById('ctrl-prev').style.visibility = index === 0 ? 'hidden' : 'visible';
+}
+
 document.getElementById('ctrl-prev').onclick = () => go(index - 1, -1);
 document.getElementById('ctrl-next').onclick = () => go((index + 1) % SCENES.length, 1);  // wraps to first page
 
@@ -285,6 +291,7 @@ function boot(){
   setCopy(def);
   setHotspots(def, groups[start]);
   setCounter(start);
+  updateNav();
   setTimeout(() => copyEl.classList.add('in'), 900);
 
   frame();
