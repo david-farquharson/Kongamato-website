@@ -104,8 +104,14 @@ body.menu-open .burger span:nth-child(3){transform:translateY(-7px) rotate(-45de
   position:absolute;left:0;top:250px;
   width:100%;pointer-events:none;
 }
+/* cue-inner: the movable group (rail + text). Default position below;
+   per-scene overrides come from cuePos in js/scenes.js */
+.cue-inner{
+  position:absolute;right:250px;top:0;
+  display:flex;align-items:flex-start;gap:18px;
+}
 .scroll-cue .rail{
-  position:absolute;right:570px;top:-42px;width:1px;height:100px;
+  position:relative;width:1px;height:100px;flex:none;
   background:linear-gradient(var(--accent),rgba(246,229,0,0));
   overflow:hidden;
 }
@@ -120,7 +126,7 @@ body.menu-open .burger span:nth-child(3){transform:translateY(-7px) rotate(-45de
   100%{top:118px;opacity:0}
 }
 .scroll-cue .txt{
-  position:absolute;right:250px;top:-8px;
+  margin-top:34px;white-space:nowrap;
   font-size:.72rem;letter-spacing:.24em;text-transform:uppercase;
   color:var(--accent);animation:cueFade 2.8s ease-in-out infinite;
 }
@@ -233,8 +239,7 @@ body.menu-open .menu li:nth-child(5) a{transition-delay:.36s}
 
 /* ---------- Responsive ---------- */
 @media (max-width:1100px){
-  .scroll-cue .rail{left:48px}
-  .scroll-cue .txt{left:82px}
+  .cue-inner{right:48px}
   .copy{left:48px;bottom:150px;max-width:70vw}
 }
 @media (max-width:760px){

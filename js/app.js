@@ -93,7 +93,7 @@ function setCopy(def){
   copyEl.style.bottom   = p.bottom   ?? '';
   copyEl.style.maxWidth = p.maxWidth ?? '';
   // per-scene placement of the "scroll to discover" cue + rail
-  const cue = document.querySelector('.scroll-cue');
+  const cue = document.querySelector('.cue-inner');
   const c = def.cuePos || {};
   cue.style.left   = c.left   ?? '';
   cue.style.right  = c.right  ?? '';
