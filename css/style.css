@@ -165,6 +165,7 @@ body.menu-open .burger span:nth-child(3){transform:translateY(-7px) rotate(-45de
 .lang a:hover{color:#fff}
 .sound{width:34px;height:20px;cursor:pointer}
 .sound path{stroke:#fff;fill:none;stroke-width:1.4}
+.counter i{font-style:normal}
 .foot-right .ret:hover{color:#fff}
 .foot-right .ret b{color:#fff;font-weight:400}
 
