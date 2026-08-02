@@ -289,30 +289,35 @@ const SCENES = [
     id:'slider', label:'Overture', title:'Innovation',
     body:'An interactive walkthrough of engineering ideas. Scroll, swipe, or use the arrow keys to move between scenes — replace this text with your own narrative.',
     copyPos:{ left:'381px', bottom:'200px' },   // <-- this scene's text position
+    cuePos:{ bottom:'200px' },                    // <-- this scene's \"scroll to discover\" position
     cam:[0, 30, 250], look:[0, 10, 0], build:sceneSlider
   },
   {
     id:'protect', label:'Protect', title:'Protect',
     body:'A compact sensing platform mounted on an all-terrain carrier, able to survey spaces that are difficult or unsafe for people to enter. Placeholder copy — swap in your own description.',
     copyPos:{ left:'400px', bottom:'200px' },   // <-- this scene's text position
+    cuePos:{ bottom:'200px' },                    // <-- this scene's \"scroll to discover\" position
     cam:[10, 46, 165], look:[6, 8, 0], build:sceneProtect
   },
   {
     id:'validate', label:'Validate', title:'Validate',
     body:'Overlaying live data onto complex installations so that inspection, traceability, and sign-off happen in one continuous pass. Placeholder copy — swap in your own description.',
     copyPos:{ left:'300px', bottom:'300px' },   // <-- this scene's text position
+    cuePos:{ bottom:'200px' },                    // <-- this scene's \"scroll to discover\" position
     cam:[-14, 34, 205], look:[8, 4, 0], build:sceneInspect
   },
   {
     id:'training', label:'Training', title:'Training',
     body:'A simulation cabin that lets operators rehearse demanding manoeuvres safely, long before they perform them on site. Placeholder copy — swap in your own description.',
     copyPos:{ left:'300px', bottom:'300px' },   // <-- this scene's text position
+    cuePos:{ bottom:'200px' },                    // <-- this scene's \"scroll to discover\" position
     cam:[36, 40, 235], look:[6, -4, 0], build:sceneSimulate
   },
   {
     id:'investigate', label:'Investigate', title:'Investigate',
     body:'Autonomous aerial survey across large sites — mapping, monitoring, and inspecting terrain from exploration through to rehabilitation. Placeholder copy — swap in your own description.',
     copyPos:{ left:'300px', bottom:'300px' },   // <-- this scene's text position
+    cuePos:{ bottom:'200px' },                    // <-- this scene's \"scroll to discover\" position
     cam:[-26, 52, 210], look:[10, 6, 0], build:sceneScout
   }
 ];
