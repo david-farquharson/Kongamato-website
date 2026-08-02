@@ -51,6 +51,9 @@ const titleEl  = copyEl.querySelector('h1');
 const bodyEl   = copyEl.querySelector('p');
 const hotLayer = document.getElementById('hotspots');
 
+/* scene counter total: always matches the SCENES registry */
+document.querySelector('.counter i').textContent = String(SCENES.length).padStart(2, '0');
+
 /* build menu */
 const menuList = document.querySelector('.menu ol');
 SCENES.forEach((def, i) => {
