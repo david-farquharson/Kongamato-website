@@ -212,6 +212,13 @@ function frame(){
 
   // per-scene motion
   groups.forEach((g, i) => {
+    // terrain rotation transition: ease toward target while the scene is
+    // active, reset to 0 when leaving so it re-animates on each visit
+    const spin = g.userData.terrainSpin;
+    if (spin){
+      if (!g.visible) spin.obj.rotation.y = 0;
+      else spin.obj.rotation.y += (spin.target - spin.obj.rotation.y) * .035;
+    }
     if (!g.visible) return;
     g.rotation.y += (0 - g.rotation.y) * .05;      // settle entry offset
     g.position.y += (0 - g.position.y) * .06;

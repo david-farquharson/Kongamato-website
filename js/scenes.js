@@ -147,7 +147,10 @@ function wireframeify(root, color, opacity){
 }
 
 function sceneCessnaTerrain(opts = {}){
-  const hoverBase = opts.hoverBase ?? 26;
+  const hoverBase  = opts.hoverBase ?? 26;
+  const aircraft   = opts.aircraft ?? true;        // show the Synergy aircraft?
+  const terrainRot = opts.terrainRot ?? 0;         // degrees to spin the terrain to (animated)
+  const floorRings = opts.floorRings ?? false;     // gold contour rings on the floor?
   const g = new THREE.Group();
 
   // --- mountains: rugged landscape gltf — full stage width, bottom 2/3,
@@ -168,11 +171,14 @@ function sceneCessnaTerrain(opts = {}){
     wrap.position.set(MOUNTAIN_OFFSET_X, -46 + (size.y * (1000 / size.x)) / 2, -80);  // pushed back behind the aircraft
     wrap.rotation.x = THREE.MathUtils.degToRad(0);  // tilt down 10%
     g.add(wrap);
+    // animated rotation of the terrain around its centre axis (see app.js frame loop)
+    if (terrainRot) g.userData.terrainSpin = { obj: wrap, target: THREE.MathUtils.degToRad(terrainRot) };
     console.log('mountains loaded, size:', size);
   }, undefined, gltfError(GLTF_ASSETS.mountains));
 
   // --- foreground: Synergy aircraft (solid body, from synergy.blend) ---
   const plane = new THREE.Group();
+  if (aircraft){
   gltfLoader.load(GLTF_ASSETS.aircraft, gltf => {
     const jet = gltf.scene;
     // Blender-exported materials are used as-is (colours baked in the .glb)
@@ -202,6 +208,26 @@ function sceneCessnaTerrain(opts = {}){
   g.userData.accent = plane;
   g.userData.hover = plane;
   g.userData.hoverBase = hoverBase;
+  }
+
+  // --- optional: gold contour rings on the floor plane ---
+  if (floorRings){
+    const contours = new THREE.Group();
+    for (let i = 0; i < 9; i++){
+      const pts = [];
+      const R = 26 + i * 15, N = 74;
+      for (let a = 0; a <= N; a++){
+        const th = (a / N) * Math.PI * 2;
+        const wob = Math.sin(th * 3 + i) * 9 + Math.sin(th * 7 - i * 2) * 4;
+        pts.push(new THREE.Vector3(Math.cos(th) * (R + wob), 0, Math.sin(th) * (R + wob) * .7));
+      }
+      contours.add(new THREE.Line(
+        new THREE.BufferGeometry().setFromPoints(pts),
+        wire(ACCENT, .30 - i * 0.022)));
+    }
+    contours.position.y = -44;
+    g.add(contours);
+  }
 
   g.userData.hotspots = [[-0.10, 0.12], [0.14, -0.02]];
   return g;
@@ -212,148 +238,22 @@ function sceneSlider(){  return sceneCessnaTerrain({ hoverBase: 28 }); }  // ver
 /* ==========================================================
    Scene 2 — INSPECT : tank hall + AR tablet overlay (accent)
    ========================================================== */
-function sceneInspect(){
-  const g = new THREE.Group();
-
-  // horizontal vessel bank
-  const vessels = new THREE.Group();
-  for (let i = 0; i < 4; i++){
-    const v = mesh(new THREE.CylinderGeometry(17, 17, 20, 24, 2), GHOST, .22);
-    v.rotation.z = Math.PI / 2;
-    v.position.x = -30 + i * 21;
-    vessels.add(v);
-  }
-  g.add(vessels);
-
-  // silo towers in the distance
-  [-120, -86, 96, 128].forEach((x, i) => {
-    const s = mesh(new THREE.CylinderGeometry(13, 13, 60 + i * 8, 18, 4), GHOST, .14);
-    s.position.set(x, 6, -70 - i * 10);
-    g.add(s);
-  });
-
-  // accent: floating AR tablet frame with UI blocks
-  const ui = new THREE.Group();
-  ui.add(edges(new THREE.PlaneGeometry(96, 62), ACCENT, .95));
-  for (let i = 0; i < 4; i++){
-    const chip = edges(new THREE.PlaneGeometry(11, 7), ACCENT, .8);
-    chip.position.set(-38, 20 - i * 12, .4);
-    ui.add(chip);
-  }
-  const panelA = edges(new THREE.PlaneGeometry(26, 24), ACCENT, .85);
-  panelA.position.set(31, 12, .4);
-  ui.add(panelA);
-  const panelB = edges(new THREE.PlaneGeometry(26, 16), ACCENT, .85);
-  panelB.position.set(31, -14, .4);
-  ui.add(panelB);
-  ui.rotation.set(0.05, -0.32, 0.045);
-  ui.position.set(16, 4, 34);
-  g.add(ui);
-  g.userData.accent = ui;
-
-  g.userData.hotspots = [[0.02, 0.22], [0.14, -0.02], [0.22, 0.10]];
-  return g;
+function sceneInspect(){  // VALIDATE: terrain only, rotated 60°
+  return sceneCessnaTerrain({ aircraft:false, terrainRot:60 });
 }
 
 /* ==========================================================
    Scene 3 — SIMULATE : training cabin frame + seat (accent)
    ========================================================== */
-function sceneSimulate(){
-  const g = new THREE.Group();
-
-  // outer room shell — open box built from edge frames
-  const shell = new THREE.Group();
-  shell.add(edges(new THREE.BoxGeometry(120, 96, 110), ACCENT, .85));
-  shell.add(edges(new THREE.BoxGeometry(119, 1, 109), ACCENT, .6)); // mid rail
-  const ghostShell = mesh(new THREE.BoxGeometry(126, 100, 116, 5, 4, 5), GHOST, .12);
-  shell.add(ghostShell);
-  g.add(shell);
-
-  // platform
-  const plat = edges(new THREE.BoxGeometry(70, 3, 60), ACCENT, .75);
-  plat.position.y = -44;
-  g.add(plat);
-
-  // accent: operator seat
-  const seat = new THREE.Group();
-  seat.add(mesh(new THREE.BoxGeometry(26, 6, 26, 5, 2, 5), ACCENT, .9));          // base
-  const back = mesh(new THREE.CylinderGeometry(13, 16, 46, 16, 6, true), ACCENT, .9);
-  back.position.set(0, 25, -9);
-  back.rotation.x = -0.13;
-  seat.add(back);
-  [-17, 17].forEach(x => {                                                        // armrests
-    const a = mesh(new THREE.BoxGeometry(5, 3, 22, 2, 1, 4), ACCENT, .8);
-    a.position.set(x, 9, 2);
-    seat.add(a);
-  });
-  const stick = mesh(new THREE.SphereGeometry(3.4, 10, 8), ACCENT, .95);
-  stick.position.set(-17, 14, 6);
-  seat.add(stick);
-  seat.position.set(6, -28, 6);
-  g.add(seat);
-  g.userData.accent = seat;
-
-  g.userData.hotspots = [[0.10, 0.14], [-0.08, -0.02], [0.02, -0.14]];
-  return g;
+function sceneSimulate(){ // TRAINING: terrain only, rotated 60+30=90°
+  return sceneCessnaTerrain({ aircraft:false, terrainRot:90 });
 }
 
 /* ==========================================================
    Scene 4 — SCOUT : survey drone over contour terrain (accent)
    ========================================================== */
-function sceneScout(){
-  const g = new THREE.Group();
-
-  // contour "map" rings on the floor plane
-  const contours = new THREE.Group();
-  for (let i = 0; i < 9; i++){
-    const pts = [];
-    const R = 26 + i * 15, N = 74;
-    for (let a = 0; a <= N; a++){
-      const th = (a / N) * Math.PI * 2;
-      const wob = Math.sin(th * 3 + i) * 9 + Math.sin(th * 7 - i * 2) * 4;
-      pts.push(new THREE.Vector3(Math.cos(th) * (R + wob), 0, Math.sin(th) * (R + wob) * .7));
-    }
-    const line = new THREE.Line(
-      new THREE.BufferGeometry().setFromPoints(pts),
-      wire(ACCENT, .30 - i * 0.022));
-    contours.add(line);
-  }
-  contours.position.y = -44;
-  g.add(contours);
-
-  // accent: drone
-  const drone = new THREE.Group();
-  const fus = mesh(new THREE.CapsuleGeometry(11, 34, 8, 18), ACCENT, .9);
-  fus.rotation.z = Math.PI / 2;
-  drone.add(fus);
-  const sensor = mesh(new THREE.SphereGeometry(9, 14, 10), ACCENT, .9);
-  sensor.position.set(4, -14, 0);
-  drone.add(sensor);
-  // rotor booms (long crossing rails)
-  [[1, 1], [-1, -1], [1, -1], [-1, 1]].forEach(([sx, sz]) => {
-    const boom = mesh(new THREE.BoxGeometry(150, 2.4, 4, 22, 1, 1), ACCENT, .8);
-    boom.rotation.y = Math.atan2(sz, sx) + Math.PI / 4;
-    boom.position.y = 6;
-    drone.add(boom);
-  });
-  // landing skids
-  [-1, 1].forEach(s => {
-    const leg = mesh(new THREE.BoxGeometry(2.4, 42, 2.4, 1, 5, 1), ACCENT, .75);
-    leg.position.set(s * 16, -32, s * 8);
-    leg.rotation.z = s * 0.22;
-    drone.add(leg);
-    const skid = mesh(new THREE.BoxGeometry(2.6, 2.6, 56, 1, 1, 7), ACCENT, .75);
-    skid.position.set(s * 20, -52, s * 8);
-    drone.add(skid);
-  });
-  drone.position.set(14, 26, 0);
-  drone.rotation.set(0.12, 0.5, -0.16);
-  g.add(drone);
-  g.userData.accent = drone;
-  g.userData.hover = drone;
-
-  g.userData.hotspots = [[-0.12, 0.10], [0.02, -0.06]];
-  return g;
+function sceneScout(){    // INVESTIGATE: terrain only, rotated 90+90=180°, keep gold floor rings
+  return sceneCessnaTerrain({ aircraft:false, terrainRot:180, floorRings:true });
 }
 
 /* ==========================================================
