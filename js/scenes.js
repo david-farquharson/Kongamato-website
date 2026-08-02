@@ -294,7 +294,7 @@ const SCENES = [
   {
     id:'protect', label:'Protect', title:'Protect',
     body:'A compact sensing platform mounted on an all-terrain carrier, able to survey spaces that are difficult or unsafe for people to enter. Placeholder copy — swap in your own description.',
-    copyPos:{ right:'150px', bottom:'300px' },   // <-- this scene's text position
+    copyPos:{ left:'400px', bottom:'200px' },   // <-- this scene's text position
     cam:[10, 46, 165], look:[6, 8, 0], build:sceneProtect
   },
   {
@@ -306,7 +306,7 @@ const SCENES = [
   {
     id:'training', label:'Training', title:'Training',
     body:'A simulation cabin that lets operators rehearse demanding manoeuvres safely, long before they perform them on site. Placeholder copy — swap in your own description.',
-    copyPos:{ right:'100px', bottom:'300px' },   // <-- this scene's text position
+    copyPos:{ left:'300px', bottom:'300px' },   // <-- this scene's text position
     cam:[36, 40, 235], look:[6, -4, 0], build:sceneSimulate
   },
   {

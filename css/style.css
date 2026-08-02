@@ -77,11 +77,17 @@ body.menu-open .burger span:nth-child(1){transform:translateY(7px) rotate(45deg)
 body.menu-open .burger span:nth-child(2){opacity:0}
 body.menu-open .burger span:nth-child(3){transform:translateY(-7px) rotate(-45deg)}
 
-/* right-hand circular controls */
+/* left/right circular arrow navigation */
 .controls{
-  position:absolute;right:56px;top:50%;transform:translateY(-50%);
-  display:flex;flex-direction:column;gap:22px;
+  position:absolute;inset:0;pointer-events:none;
 }
+.ctrl.nav{
+  position:absolute;top:50%;transform:translateY(-50%);
+  pointer-events:auto;
+}
+.ctrl.nav.prev{left:56px}
+.ctrl.nav.next{right:56px}
+.ctrl.nav:hover{transform:translateY(-50%) scale(1.07)}
 .ctrl{
   width:56px;height:56px;border-radius:50%;
   border:1px solid var(--line);background:rgba(255,255,255,.02);
@@ -95,11 +101,11 @@ body.menu-open .burger span:nth-child(3){transform:translateY(-7px) rotate(-45de
 
 /* scroll cue */
 .scroll-cue{
-  position:absolute;left:0;bottom:200px;
+  position:absolute;left:0;top:250px;
   width:100%;pointer-events:none;
 }
 .scroll-cue .rail{
-  position:absolute;right:600px;top:-42px;width:1px;height:130px;
+  position:absolute;right:600px;top:-42px;width:1px;height:100px;
   background:linear-gradient(var(--accent),rgba(246,229,0,0));
   overflow:hidden;
 }
@@ -218,7 +224,8 @@ body.menu-open .menu li:nth-child(5) a{transition-delay:.36s}
 @media (max-width:760px){
   .tagline{left:24px;top:32px;font-size:.6rem}
   .top-right{right:24px;top:30px}
-  .controls{right:18px;gap:14px}
+  .ctrl.nav.prev{left:14px}
+  .ctrl.nav.next{right:14px}
   .ctrl{width:44px;height:44px}
   .copy{left:24px;bottom:190px;max-width:88vw}
   .copy h1{letter-spacing:.1em}

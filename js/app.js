@@ -174,8 +174,8 @@ document.querySelector('.burger').onclick = () =>
   document.body.classList.toggle('menu-open');
 document.querySelector('.top-right .label').onclick = () =>
   document.body.classList.toggle('menu-open');
-document.getElementById('ctrl-close').onclick = () => go(0, -1);
-document.getElementById('ctrl-next').onclick  = () => go(index + 1, 1);
+document.getElementById('ctrl-prev').onclick = () => go(index - 1, -1);
+document.getElementById('ctrl-next').onclick = () => go(index + 1, 1);
 
 /* ---------------- resize ---------------- */
 addEventListener('resize', () => {
