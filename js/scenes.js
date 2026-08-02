@@ -117,7 +117,7 @@ function sceneRover(){
    Scene 5 — PROTECT : Synergy aircraft gltf over rugged mountain gltf
    ========================================================== */
 const GLTF_ASSETS = {
-  aircraft:  'assets/synergy_solid.glb',
+  aircraft:  'assets/synergy_full.glb',
   mountains: 'assets/rugged_mountain_landscape/rugged_mountain_landscape.gltf'
 };
 const gltfLoader = new THREE.GLTFLoader();
@@ -175,14 +175,7 @@ function sceneCessnaTerrain(opts = {}){
   const plane = new THREE.Group();
   gltfLoader.load(GLTF_ASSETS.aircraft, gltf => {
     const jet = gltf.scene;
-    // solid body in the original Blender colours (baked in as vertex colours)
-    jet.traverse(o => {
-      if (o.isMesh){
-        o.material = new THREE.MeshStandardMaterial({
-          vertexColors: true, metalness: .1, roughness: .6
-        });
-      }
-    });
+    // Blender-exported materials are used as-is (colours baked in the .glb)
     // lighting rig on the unscaled parent so it always points at the plane
     plane.add(new THREE.AmbientLight(0xffffff, .5));
     const key = new THREE.DirectionalLight(0xffffff, 2.0);
