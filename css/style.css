@@ -187,9 +187,9 @@ body.menu-open .burger span:nth-child(3){transform:translateY(-7px) rotate(-45de
 }
 .os-table td{padding:14px 18px 14px 0;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.7}
 .os-cards{display:flex;flex-direction:column;gap:5vh;margin:2vh 0}
-.os-card{position:relative;border-top:1px solid var(--accent);padding-top:26px;max-width:520px}
+.os-card{position:relative;border-top:1px solid var(--accent);padding-top:48px;padding-left:56px;max-width:560px}
 .os-card .os-num{
-  position:absolute;top:-1px;right:0;width:52px;height:52px;
+  position:absolute;top:-27px;right:0;width:52px;height:52px;background:var(--bg);
   border:1px solid var(--accent);border-top:none;
   display:flex;align-items:center;justify-content:center;
   color:var(--accent);font-size:.9rem;
