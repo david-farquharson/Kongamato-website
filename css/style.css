@@ -135,7 +135,7 @@ body.menu-open .burger span:nth-child(3){transform:translateY(-7px) rotate(-45de
 
 /* ---------- Open Source: scrollable long-form overlay ---------- */
 #osscroll{
-  position:absolute;inset:0;z-index:7;overflow-y:auto;overscroll-behavior:contain;
+  position:absolute;inset:0;z-index:3;overflow-y:auto;overscroll-behavior:contain;
   background:rgba(5,7,15,.96);
   opacity:0;pointer-events:none;transition:opacity .6s;
   scrollbar-width:thin;scrollbar-color:var(--line) transparent;
