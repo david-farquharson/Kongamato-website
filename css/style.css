@@ -136,8 +136,10 @@ body.menu-open .burger span:nth-child(3){transform:translateY(-7px) rotate(-45de
 /* Design Studio CFD image (shown only on that page via JS) */
 #studio-img{
   position:absolute;left:150px;bottom:300px;z-index:4;
-  width:420px;max-width:40vw;height:auto;opacity:.70;
+  width:630px;max-width:60vw;height:auto;opacity:.70;
   display:none;pointer-events:none;
+  -webkit-mask-image:radial-gradient(ellipse 62% 62% at 50% 50%, #000 40%, transparent 78%);
+          mask-image:radial-gradient(ellipse 62% 62% at 50% 50%, #000 40%, transparent 78%);
 }
 #studio-img.show{display:block}
 
