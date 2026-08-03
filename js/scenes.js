@@ -157,7 +157,7 @@ function sceneCessnaTerrain(opts = {}){
   //     tilted down ~10% ---
   gltfLoader.load(GLTF_ASSETS.mountains, gltf => {
     const m = gltf.scene;
-    wireframeify(m, 0x4D4D4D, .35);   // mountains in 30% gray
+    wireframeify(m, 0x4D4D4D, opts.terrainOpacity ?? .35);   // mountains in 30% gray (per-scene overridable)
     // normalize: scale so model width spans the full stage
     let box = new THREE.Box3().setFromObject(m);
     const size = box.getSize(new THREE.Vector3());
@@ -238,8 +238,8 @@ function sceneSlider(){  return sceneCessnaTerrain({ hoverBase: 28 }); }  // ver
 /* ==========================================================
    Scene 2 — INSPECT : tank hall + AR tablet overlay (accent)
    ========================================================== */
-function sceneInspect(){  // VALIDATE: terrain only, rotated 150°
-  return sceneCessnaTerrain({ aircraft:false, terrainRot:150 });
+function sceneInspect(){  // OPEN SOURCE: terrain only, rotated 150°, terrain 50% brighter
+  return sceneCessnaTerrain({ aircraft:false, terrainRot:150, terrainOpacity:.53 });
 }
 
 /* ==========================================================
