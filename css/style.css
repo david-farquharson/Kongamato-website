@@ -194,7 +194,7 @@ body.menu-open .burger span:nth-child(3){transform:translateY(-7px) rotate(-45de
   display:flex;align-items:center;justify-content:center;
   color:var(--accent);font-size:.9rem;
 }
-.os-card p{margin-bottom:0}
+.os-card p{margin-bottom:0;padding-right:70px}  /* clears the numbered box */
 .os-why{padding-bottom:16vh}
 .os-quote{
   font-size:clamp(1.1rem,2.4vw,1.6rem);line-height:1.9;letter-spacing:.12em;
