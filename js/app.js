@@ -58,6 +58,8 @@ function setOSOverlay(id){
   osOverlay.classList.toggle('open', isOS);
   if (isOS) osOverlay.scrollTop = 0;
   copyEl.style.display = isOS ? 'none' : '';   // overlay carries its own hero text
+  // "scroll to discover" cue + rail: only on the open_source page
+  document.querySelector('.scroll-cue').style.display = isOS ? '' : 'none';
 }
 
 /* scene counter: current page (gold) — next page (dim), rolling animation */
