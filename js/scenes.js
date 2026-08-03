@@ -232,7 +232,7 @@ function sceneCessnaTerrain(opts = {}){
   g.userData.hotspots = [[-0.10, 0.12], [0.14, -0.02]];
   return g;
 }
-function sceneProtect(){ return sceneCessnaTerrain({ hoverBase: 28 }); }  // vertically centred
+function sceneProtect(){ return sceneCessnaTerrain({ aircraft:false }); }  // terrain only
 function sceneSlider(){  return sceneCessnaTerrain({ hoverBase: 28 }); }  // vertically centred
 
 /* ==========================================================
@@ -245,8 +245,8 @@ function sceneInspect(){  // VALIDATE: terrain only, rotated 150°
 /* ==========================================================
    Scene 3 — SIMULATE : training cabin frame + seat (accent)
    ========================================================== */
-function sceneSimulate(){ // TRAINING: terrain only, rotated 60+30=90°
-  return sceneCessnaTerrain({ aircraft:false, terrainRot:90 });
+function sceneSimulate(){ // TRAINING: aircraft (same position/scale/orientation as it was on Protect), terrain rotated 90°
+  return sceneCessnaTerrain({ hoverBase: 28, terrainRot:90 });
 }
 
 /* ==========================================================
