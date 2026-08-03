@@ -314,8 +314,8 @@ const SCENES = [
     cam:[36, 40, 235], look:[6, -4, 0], build:sceneSimulate
   },
   {
-    id:'investigate', label:'Investigate', title:'Investigate',
-    body:'Autonomous aerial survey across large sites — mapping, monitoring, and inspecting terrain from exploration through to rehabilitation. Placeholder copy — swap in your own description.',
+    id:'investigate', label:'Investigate', title:'Kongamato',
+    body:'Kongamato is an open-source, full-stack avionics platform for experimental aviation: a glass cockpit, an AR smart-glasses HUD, and a full autopilot — auto takeoff, auto land, nearest-airport diversion, wind-aware patterns, traffic and obstacle awareness — commanded by simple voice or text, supervised from the panel or the HUD, and overridable by the Pilot in Command at all times.',
     copyPos:{ left:'300px', bottom:'300px' },   // <-- this scene's text position
     cuePos:{ top:'-100px' },                    // <-- this scene's \"scroll to discover\" position
     cam:[-26, 52, 210], look:[10, 6, 0], build:sceneScout

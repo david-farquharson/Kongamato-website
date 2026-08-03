@@ -84,7 +84,7 @@ function setCopy(def){
     s.style.transitionDelay = (0.12 + i * 0.045) + 's';
     titleEl.appendChild(s);
   });
-  bodyEl.textContent = def.body;
+  bodyEl.innerHTML = def.body;   // innerHTML so <br> etc. in body text render properly
   // per-scene placement of the .copy block (falls back to style.css .copy)
   const p = def.copyPos || {};
   copyEl.style.left     = p.left     ?? '';
