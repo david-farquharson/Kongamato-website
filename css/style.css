@@ -133,6 +133,14 @@ body.menu-open .burger span:nth-child(3){transform:translateY(-7px) rotate(-45de
 @keyframes cueFade{50%{opacity:.45}}
 .scroll-cue .txt{text-decoration:none;cursor:pointer;display:inline-block}
 
+/* Design Studio CFD image (shown only on that page via JS) */
+#studio-img{
+  position:absolute;left:150px;bottom:300px;z-index:4;
+  width:420px;max-width:40vw;height:auto;opacity:.70;
+  display:none;pointer-events:none;
+}
+#studio-img.show{display:block}
+
 /* subtle dark shade + vertical grid lines over the 3D stage (all pages) */
 .page-grid{
   position:fixed;inset:0;z-index:2;pointer-events:none;

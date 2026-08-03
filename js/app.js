@@ -60,6 +60,8 @@ function setOSOverlay(id){
   copyEl.style.display = isOS ? 'none' : '';   // overlay carries its own hero text
   // "scroll to discover" cue + rail: only on the open_source page
   document.querySelector('.scroll-cue').style.display = isOS ? '' : 'none';
+  // CFD image: only on the design_studio page
+  document.getElementById('studio-img').classList.toggle('show', id === 'design_studio');
 }
 
 /* scene counter: current page (gold) — next page (dim), rolling animation */
