@@ -287,15 +287,16 @@ function sceneOverture(){
 const SCENES = [
   {
     id:'slider', label:'Overture', title:'Innovation',
-    body:'Kongamato is an aviation research company developing a full-stack platform: advanced composite airframes, custom avionics, and integrated mission displays, designed as one system rather than assembled from third-party parts. Our first target capability is life-sign detection surfaced directly in the pilot\'s field of view &mdash; turning a search pattern into a targeted approach for search-and-rescue, with clear carry-over to defense missions. The architecture is intended to scale across both VTOL and STOL configurations.<br><br>We will release our systems under Apache 2.0. Avionics that hold lives should be auditable by anyone who wants to check the work. Kongamato is building toward manned and unmanned aircraft in partnership with others.',
-    copyPos:{ left:'381px', bottom:'200px' },   // <-- this scene's text position
+    body:'Kongamato is an aviation research company developing a full-stack platform: advanced composite airframes, custom avionics, and integrated mission displays, designed as one system rather than assembled from third-party parts. Our first target capability is life-sign detection surfaced directly in the pilot\'s field of view &mdash; turning a search pattern into a targeted approach for search-and-rescue, with clear carry-over to defense missions. The architecture is intended to scale across both VTOL and STOL configurations. Kongamato is building toward manned and unmanned aircraft in partnership with others.',
+    // body:'Kongamato is an aviation research company developing a full-stack platform: advanced composite airframes, custom avionics, and integrated mission displays, designed as one system rather than assembled from third-party parts. Our first target capability is life-sign detection surfaced directly in the pilot\'s field of view &mdash; turning a search pattern into a targeted approach for search-and-rescue, with clear carry-over to defense missions. The architecture is intended to scale across both VTOL and STOL configurations.<br><br>We will release our systems under Apache 2.0. Avionics that hold lives should be auditable by anyone who wants to check the work. Kongamato is building toward manned and unmanned aircraft in partnership with others.',
+    copyPos:{ right:'381px', bottom:'150px' },   // <-- this scene's text position
     cuePos:{ left:'600px', bottom:'200px' },                    // <-- this scene's \"scroll to discover\" position
     cam:[0, 30, 250], look:[0, 10, 0], build:sceneSlider
   },
   {
-    id:'protect', label:'Protect', title:'Avionics',
-    body:'A complete, browser-based aircraft and drone conceptual-design workbench — nine linked analysis tabs covering the calculations aerospace engineers actually use to size a new airframe from scratch, including a live Lattice-Boltzmann CFD wind tunnel.',
-    copyPos:{ left:'400px', bottom:'200px' },   // <-- this scene's text position
+    id:'protect', label:'Protect', title:'Design Studio',
+    body:'Aircraft Design Studio is a browser-based conceptual-design workbench for aircraft and drones, nine linked analysis tabs covering the sizing calculations aerospace engineers actually use, from constraint diagrams and drag polars to V-n envelopes, weight and CG build-up, and stability derivatives. Every tab shares one design state, so changing gross weight propagates through the geometry, performance, and structural envelope at once. The ninth tab is a live Lattice-Boltzmann CFD wind tunnel: upload any STL or OBJ and it voxelizes the mesh onto a D3Q19 lattice and solves transient viscous flow on the GPU, returning lift and drag by momentum exchange alongside a full ISA atmosphere solution. It runs from a single HTML file with no libraries, no build step, and no network, open it and it works, offline.',
+    copyPos:{ right:'400px', bottom:'150px', maxWidth:'460px' },   // <-- this scene's text position
     cuePos:{ left:'900px', top:'-100px' },                          // <-- this scene's \"scroll to discover\" position
     cam:[10, 46, 165], look:[6, 8, 0], build:sceneProtect
   },
@@ -315,7 +316,7 @@ const SCENES = [
   },
   {
     id:'investigate', label:'Investigate', title:'Kongamato',
-    body:'Kongamato is an open-source, full-stack avionics platform for experimental aviation: a glass cockpit, an AR smart-glasses HUD, and a full autopilot — auto takeoff, auto land, nearest-airport diversion, wind-aware patterns, traffic and obstacle awareness — commanded by simple voice or text, supervised from the panel or the HUD, and overridable by the Pilot in Command at all times.',
+    body:'Kongamato is building an open-source, full-stack avionics platform for experimental aviation: a glass cockpit, an AR smart-glasses HUD, and an autopilot commanded by plain voice or text. The target capability set includes auto takeoff and landing, nearest-airport diversion, wind-aware pattern work, and traffic and obstacle awareness; supervised from the panel or the HUD, and overridable by the Pilot in Command at all times.',
     copyPos:{ left:'300px', bottom:'300px' },   // <-- this scene's text position
     cuePos:{ top:'-100px' },                    // <-- this scene's \"scroll to discover\" position
     cam:[-26, 52, 210], look:[10, 6, 0], build:sceneScout
