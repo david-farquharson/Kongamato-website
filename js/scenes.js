@@ -310,7 +310,7 @@ const SCENES = [
   {
     id:'training', label:'Training', title:'Training',
     body:'Aviation has a pipeline problem: the tools that teach real aircraft design are expensive, licensed, and locked to institutions that can afford them. Ours runs in a browser, offline, for free.<br><br><b>For students.</b> Design Studio puts the same sizing calculations used in professional practice; constraint diagrams, drag polars, V-n envelopes, stability derivatives, CFD; in front of any high school or college student with a laptop. No license, no install, no lab requirement. Paired with mentorship, it gives students a path from first sketch to a design they can defend.<br><br><b>For professionals.</b> Structured training across the full design-build cycle, from conceptual sizing through composite fabrication and systems integration, for engineers moving into experimental and unmanned aviation.<br><br>Everything we build is released under Apache 2.0. Avionics that hold lives should be auditable by anyone who wants to check the work; and tools that teach should be available to anyone who wants to learn.',
-    copyPos:{ left:'300px', bottom:'300px' },   // <-- this scene's text position
+    copyPos:{ left:'300px', bottom:'300px', maxWidth:'530px' },   // <-- this scene's text position
     cuePos:{ top:'-100px' },                 // <-- this scene's \"scroll to discover\" position
     cam:[36, 40, 235], look:[6, -4, 0], build:sceneSimulate
   },
