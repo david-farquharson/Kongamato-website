@@ -137,7 +137,7 @@ body.menu-open .burger span:nth-child(3){transform:translateY(-7px) rotate(-45de
 .page-grid{
   position:fixed;inset:0;z-index:2;pointer-events:none;
   background:
-    linear-gradient(rgba(5,7,15,.28),rgba(5,7,15,.28)),
+    linear-gradient(rgba(5,7,15,.70),rgba(5,7,15,.70)),
     linear-gradient(90deg,var(--line) 1px,transparent 1px) 19% 0/25% 100% no-repeat,
     linear-gradient(90deg,var(--line) 1px,transparent 1px) 44% 0/25% 100% no-repeat,
     linear-gradient(90deg,var(--line) 1px,transparent 1px) 69% 0/25% 100% no-repeat;
