@@ -50,6 +50,15 @@ const copyEl   = document.querySelector('.copy');
 const titleEl  = copyEl.querySelector('h1');
 const bodyEl   = copyEl.querySelector('p');
 const hotLayer = document.getElementById('hotspots');
+const osOverlay = document.getElementById('osscroll');
+
+/* open_source scene: toggle the scrollable long-form overlay */
+function setOSOverlay(id){
+  const isOS = id === 'open_source';
+  osOverlay.classList.toggle('open', isOS);
+  if (isOS) osOverlay.scrollTop = 0;
+  copyEl.style.display = isOS ? 'none' : '';   // overlay carries its own hero text
+}
 
 /* scene counter: current page (gold) — next page (dim), rolling animation */
 const counterEl = document.querySelector('.counter');
@@ -138,6 +147,7 @@ function go(n, dir = 1){
     lookAt.set(...def.look);
     setCopy(def);
     setHotspots(def, to);
+    setOSOverlay(def.id);
 
     copyEl.classList.remove('out');
     copyEl.classList.add('in');
@@ -155,6 +165,7 @@ function go(n, dir = 1){
 /* wheel */
 let lock = false;
 addEventListener('wheel', e => {
+  if (osOverlay.classList.contains('open')) return;   // overlay scrolls natively
   if (lock || Math.abs(e.deltaY) < 18) return;
   lock = true; setTimeout(() => lock = false, 950);
   const d = e.deltaY > 0 ? 1 : -1;
@@ -193,6 +204,13 @@ document.querySelector('.top-right .label').onclick = () =>
 function updateNav(){
   document.getElementById('ctrl-prev').style.visibility = index === 0 ? 'hidden' : 'visible';
 }
+
+/* "Scroll to discover" cue: scroll the overlay, or advance scene */
+document.getElementById('cue-link').onclick = e => {
+  e.preventDefault();
+  if (osOverlay.classList.contains('open')) osOverlay.scrollBy({ top: innerHeight * 0.85, behavior:'smooth' });
+  else go((index + 1) % SCENES.length, 1);
+};
 
 document.getElementById('ctrl-prev').onclick = () => go(index - 1, -1);
 document.getElementById('ctrl-next').onclick = () => go((index + 1) % SCENES.length, 1);  // wraps to first page
@@ -290,6 +308,7 @@ function boot(){
   lookAt.set(...def.look);
   setCopy(def);
   setHotspots(def, groups[start]);
+  setOSOverlay(def.id);
   setCounter(start);
   updateNav();
   setTimeout(() => copyEl.classList.add('in'), 900);

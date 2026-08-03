@@ -33,6 +33,97 @@
 <div class="atmos"></div>
 <div id="hotspots"></div>
 
+<!-- ============ OPEN SOURCE: scrollable long-form page ============ -->
+<article id="osscroll">
+  <div class="os-grid"></div>
+
+  <header class="os-hero">
+    <h1>Open<br>Source</h1>
+    <div class="os-intro">
+      <p>Everything Kongamato builds is released under Apache 2.0: the tools, the avionics, the airframe data. Below is the current state of the code, what we have validated it against, and where it breaks. We publish the limits alongside the capabilities because avionics that hold lives should be auditable by anyone who wants to check the work.</p>
+      <p>This page is a living document. It reflects what exists today, not what we intend to build.</p>
+    </div>
+  </header>
+
+  <section class="os-sec">
+    <div class="os-kicker">Project — Released</div>
+    <h2>Aircraft Design Studio</h2>
+    <p class="os-status">Status: released and running.</p>
+    <p>A browser-based conceptual-design workbench for aircraft and drones. Nine linked analysis tabs covering the sizing calculations aerospace engineers actually use (constraint diagrams, drag polars, V-n envelopes, weight and CG build-up, stability derivatives) plus a live Lattice-Boltzmann CFD wind tunnel. Every tab shares one design state, so changing gross weight propagates through geometry, performance, and structural envelope at once.</p>
+    <p>Runs offline from a single HTML file. No libraries, no build step, no network.</p>
+    <p class="os-links">→ <a href="#">Repository</a> · <a href="#">Open the tool</a></p>
+
+    <h3>What the CFD solver actually does</h3>
+    <p>A transient Navier–Stokes solution, not an animation. D3Q19 Lattice Boltzmann on a 128×64×64 lattice with BGK collision, running as WebGPU compute shaders where available and falling back automatically to an equivalent WebGL2 solver. Upload any STL or OBJ and the mesh is normalized, rotated to the requested angle of attack, and voxelized onto the lattice. Forces come from Ladd momentum-exchange summed over every boundary link, the same physical quantity a wind-tunnel balance measures.</p>
+
+    <h3>Validation</h3>
+    <table class="os-table">
+      <thead><tr><th>Test</th><th>Solver</th><th>Published / theory</th></tr></thead>
+      <tbody>
+        <tr><td>Cylinder C<sub>D</sub> (Re 200–8000)</td><td>0.78 – 1.15</td><td>1.0 – 1.3</td></tr>
+        <tr><td>Vortex shedding</td><td>von Kármán street, St ≈ 0.2</td><td>St ≈ 0.20</td></tr>
+        <tr><td>Streamlined vs bluff C<sub>D</sub></td><td>fuselage ≪ cylinder</td><td>same ordering</td></tr>
+        <tr><td>Numerical stability</td><td>0 non-finite cells across all runs</td><td>—</td></tr>
+      </tbody>
+    </table>
+    <p class="os-note">Carried over from the v1 2D solver. Re-run these on your own hardware. We would rather you verified than trusted us.</p>
+
+    <h3>Known limits</h3>
+    <div class="os-cards">
+      <div class="os-card"><span class="os-num">1</span><p>Uniform Cartesian grid, roughly 56 cells across the model. Flow near thin trailing edges is stair-stepped even though the rendered surface is smooth. The surface view fixes the picture, not the grid.</p></div>
+      <div class="os-card"><span class="os-num">2</span><p>Effective Reynolds number capped near 2400 by lattice stability. MAV and small-drone scale.</p></div>
+      <div class="os-card"><span class="os-num">3</span><p>Low Mach, incompressible. No shocks; the UI warns above M ≥ 1.</p></div>
+      <div class="os-card"><span class="os-num">4</span><p>Coefficients normalized by model length squared, since planform area is unknown for an arbitrary upload. Comparative, not certification data.</p></div>
+      <div class="os-card"><span class="os-num">5</span><p>Voxelization assumes a reasonably watertight mesh. Open meshes may leak interior cells.</p></div>
+    </div>
+
+    <div class="os-kicker">Roadmap</div>
+    <p>Multi-resolution grid refinement near walls · wall functions for higher Re · pressure/viscous drag split · automated α-sweep producing full lift curves and drag polars · export of results back into the Aerodynamics tab.</p>
+  </section>
+
+  <section class="os-sec">
+    <div class="os-kicker">Project — Released</div>
+    <h2>Hobo-Dyer South-Up World Map</h2>
+    <p class="os-status">Status: released and running.</p>
+    <p>A full-screen interactive world map on the Hobo-Dyer equal-area projection, rotated south-up. Equal-area means country sizes are true, with no Mercator inflation of the high latitudes, and the south-up orientation strips out a visual convention most of us never examined. Countries are colored by dominant official language; zoom in and rivers, mountain ranges, capitals, cities, and the global road network appear in layers.</p>
+    <p>At deep zoom it becomes an aviation chart. New York and Washington DC render as self-built VFR sectionals, with FAA Class B/C/D and boundary airspace including floors and ceilings, airports drawn at true runway orientation, and VOR/NDB navaids with frequencies, all generated from FAA airspace GIS and OurAirports by a Python script in the repo, with no API key required. Tokyo, Israel, Cape Town, Zurich, and Jamaica pull openAIP tiles with a free key. Live air and sea traffic overlay on top.</p>
+    <p>Each Web-Mercator tile is reprojected per-tile into Hobo-Dyer by affine transform from its projected corners, so airspace boundaries and airports land on true coordinates. Chart text is drawn pre-rotated 180° so it reads upright once the south-up map flips the tile.</p>
+    <p class="os-note">Not for navigation. These are reprojected, south-up, self-rendered derivatives of published data. Use official current charts for flight planning.</p>
+    <p class="os-links">→ <a href="#">Repository</a></p>
+
+    <div class="os-kicker">Roadmap</div>
+    <p>Additional self-rendered VFR metros, to drop the openAIP key dependency · wind and current vector overlays · contour and shaded-relief layer · GHSL/WorldPop raster-backed population density · tile backend for fast global roads.</p>
+  </section>
+
+  <section class="os-sec">
+    <div class="os-kicker">In development</div>
+    <h2>Not yet released</h2>
+    <p>These repositories open as they reach a state worth building on.</p>
+    <p><b>Avionics stack.</b> Glass cockpit, AR smart-glasses HUD, and autopilot commanded by plain voice or text. Target capabilities include auto takeoff and landing, nearest-airport diversion, wind-aware pattern work, and traffic and obstacle awareness. Supervised from the panel or the HUD. Overridable by the Pilot in Command at all times.</p>
+    <p><b>Airframe.</b> Composite structures data and tooling, opening as designs mature.</p>
+  </section>
+
+  <section class="os-sec">
+    <div class="os-kicker">How to contribute</div>
+    <h2>The most useful things right now</h2>
+    <div class="os-cards">
+      <div class="os-card"><span class="os-num">1</span><p><b>Validation runs on other hardware.</b> Especially the WebGL2 fallback path. We need data from machines without WebGPU.</p></div>
+      <div class="os-card"><span class="os-num">2</span><p><b>Test cases with published reference data.</b> Any geometry with trustworthy published C<sub>L</sub>/C<sub>D</sub> we can check ourselves against.</p></div>
+      <div class="os-card"><span class="os-num">3</span><p><b>Bug reports,</b> particularly numerical instability or voxelization failures on real meshes.</p></div>
+      <div class="os-card"><span class="os-num">4</span><p><b>Additional VFR metros</b> for the map, self-rendered from public airspace data.</p></div>
+      <div class="os-card"><span class="os-num">5</span><p><b>D3 and cartography work.</b> Wind vector overlays, terrain relief, label placement.</p></div>
+    </div>
+    <p>Issues and pull requests on the repositories above. If you are an aviation nerd who writes code, the map is the most immediately contributable thing we have.</p>
+  </section>
+
+  <section class="os-sec os-why">
+    <div class="os-kicker">Why open</div>
+    <p class="os-quote">"Avionics that hold lives should be auditable by anyone who wants to check the work, and tools that teach should be available to anyone who wants to learn."</p>
+    <p>Apache 2.0 grants patent rights explicitly, which matters in a field where patents are dense and adopters need to know what they are getting.</p>
+  </section>
+</article>
+<!-- ============ /OPEN SOURCE ============ -->
+
 <!-- HUD -->
 <div class="hud">
   <div class="tagline"><i></i>Kongamato — Aviation Innovations</div>
@@ -54,7 +145,7 @@
   <div class="scroll-cue">
     <div class="cue-inner">
       <div class="rail"></div>
-      <div class="txt">Contact for more information</div>
+      <a class="txt" id="cue-link" href="#">Scroll to discover</a>
     </div>
   </div>
 
