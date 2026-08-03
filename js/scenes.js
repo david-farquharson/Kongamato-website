@@ -38,6 +38,17 @@ function buildEnvironment(){
   // grid.material.opacity = .55;
   // g.add(grid);
 
+  // dark scrim plane between terrain (far, z=-80) and aircraft (near, z=150):
+  // darkens the terrain but the nearer aircraft renders in front of it
+  const scrim = new THREE.Mesh(
+    new THREE.PlaneGeometry(4000, 2500),
+    new THREE.MeshBasicMaterial({ color:0x05070f, transparent:true, opacity:.70,
+      depthWrite:false, depthTest:true })
+  );
+  scrim.position.set(0, 0, 100);
+  scrim.renderOrder = 1;
+  g.add(scrim);
+
   // faint upper grid (ceiling) for enclosed feel
   const top = new THREE.GridHelper(900, 60, 0x1b2236, 0x11172a);
   top.position.y = 150;
@@ -287,7 +298,7 @@ function sceneOverture(){
 const SCENES = [
   {
     id:'what_we_do', label:'what_we_do', title:'What We Do',
-body:'Kongamato is building toward end-to-end capability: an aircraft designed, built, and flown under one roof, with the tools and training pipeline that make that repeatable. The stages below describe the full scope we are working toward.<br><b>Design: </b>Conceptual sizing, aerodynamics, structures, systems, and avionics — supported by our own simulation tools. This is where Design Studio already operates: constraint diagrams, drag polars, load envelopes, and CFD, running today.<br><b>Build: </b>Tooling, composite part fabrication, assembly, and systems integration. Bringing airframe manufacture in-house is what closes the loop between a design change and a flying article.<br><b>Education and Research: </b>Research and development, flight and ground testing, and STEM mentorship. We treat training as core work, not outreach.',    //body:'Kongamato is an aviation research company developing a full-stack platform: advanced composite airframes, custom avionics, and integrated mission displays, designed as one system rather than assembled from third-party parts. Our first target capability is life-sign detection surfaced directly in the pilot\'s field of view &mdash; turning a search pattern into a targeted approach for search-and-rescue, with clear carry-over to defense missions. The architecture is intended to scale across both VTOL and STOL configurations. Kongamato is building toward manned and unmanned aircraft in partnership with others.',
+body:'Kongamato is building toward end-to-end capability: an aircraft designed, built, and flown under one roof, with the tools and training pipeline that make that repeatable. The stages below describe the full scope we are working toward.<br><b>Design: </b>Conceptual sizing, aerodynamics, structures, systems, and avionics — supported by our own simulation tools. This is where Design Studio already operates: constraint diagrams, drag polars, load envelopes, and CFD, running today.<br><b>Build: </b>Tooling, composite part fabrication, assembly, and systems integration. Bringing airframe manufacture in-house is what closes the loop between a design change and a flying article.<br><b>Education and Research: </b>Research and development, flight and ground testing, and STEM mentorship. We treat training as core work, not outreach.',
     copyPos:{ right:'381px', bottom:'150px',  maxWidth:'630px' },   // <-- this scene's text position
     cuePos:{ left:'600px', bottom:'200px' },                    // <-- this scene's \"scroll to discover\" position
     cam:[0, 30, 250], look:[0, 10, 0], build:sceneSlider
