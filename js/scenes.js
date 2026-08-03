@@ -296,7 +296,7 @@ const SCENES = [
   {
     id:'protect', label:'Protect', title:'Design Studio',
     body:'Aircraft Design Studio is a browser-based conceptual-design workbench for aircraft and drones, nine linked analysis tabs covering the sizing calculations aerospace engineers actually use, from constraint diagrams and drag polars to V-n envelopes, weight and CG build-up, and stability derivatives. Every tab shares one design state, so changing gross weight propagates through the geometry, performance, and structural envelope at once. The ninth tab is a live Lattice-Boltzmann CFD wind tunnel: upload any STL or OBJ and it voxelizes the mesh onto a D3Q19 lattice and solves transient viscous flow on the GPU, returning lift and drag by momentum exchange alongside a full ISA atmosphere solution. It runs from a single HTML file with no libraries, no build step, and no network, open it and it works, offline.',
-    copyPos:{ right:'400px', bottom:'150px', maxWidth:'460px' },   // <-- this scene's text position
+    copyPos:{ right:'400px', bottom:'150px', maxWidth:'500px' },   // <-- this scene's text position
     cuePos:{ left:'900px', top:'-100px' },                          // <-- this scene's \"scroll to discover\" position
     cam:[10, 46, 165], look:[6, 8, 0], build:sceneProtect
   },
