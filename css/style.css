@@ -133,6 +133,16 @@ body.menu-open .burger span:nth-child(3){transform:translateY(-7px) rotate(-45de
 @keyframes cueFade{50%{opacity:.45}}
 .scroll-cue .txt{text-decoration:none;cursor:pointer;display:inline-block}
 
+/* subtle dark shade + vertical grid lines over the 3D stage (all pages) */
+.page-grid{
+  position:fixed;inset:0;z-index:2;pointer-events:none;
+  background:
+    linear-gradient(rgba(5,7,15,.28),rgba(5,7,15,.28)),
+    linear-gradient(90deg,var(--line) 1px,transparent 1px) 19% 0/25% 100% no-repeat,
+    linear-gradient(90deg,var(--line) 1px,transparent 1px) 44% 0/25% 100% no-repeat,
+    linear-gradient(90deg,var(--line) 1px,transparent 1px) 69% 0/25% 100% no-repeat;
+}
+
 /* ---------- Open Source: scrollable long-form overlay ---------- */
 #osscroll{
   position:absolute;inset:0;z-index:3;overflow-y:auto;overscroll-behavior:contain;
