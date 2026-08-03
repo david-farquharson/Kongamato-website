@@ -287,7 +287,7 @@ function sceneOverture(){
 const SCENES = [
   {
     id:'slider', label:'Overture', title:'Innovation',
-    body:'An interactive walkthrough of engineering ideas. Scroll, swipe, or use the arrow keys to move between scenes — replace this text with your own narrative.',
+    body:'Kongamato is an aviation research company developing a full-stack platform: advanced composite airframes, custom avionics, and integrated mission displays, designed as one system rather than assembled from third-party parts. Our first target capability is life-sign detection surfaced directly in the pilot\'s field of view &mdash; turning a search pattern into a targeted approach for search-and-rescue, with clear carry-over to defense missions. The architecture is intended to scale across both VTOL and STOL configurations.<br><br>We will release our systems under Apache 2.0. Avionics that hold lives should be auditable by anyone who wants to check the work. Kongamato is building toward manned and unmanned aircraft in partnership with others.',
     copyPos:{ left:'381px', bottom:'200px' },   // <-- this scene's text position
     cuePos:{ left:'600px', bottom:'200px' },                    // <-- this scene's \"scroll to discover\" position
     cam:[0, 30, 250], look:[0, 10, 0], build:sceneSlider
