@@ -189,8 +189,8 @@ body.menu-open .burger span:nth-child(3){transform:translateY(-7px) rotate(-45de
 .os-cards{display:flex;flex-direction:column;gap:5vh;margin:2vh 0}
 .os-card{position:relative;border-top:1px solid var(--accent);padding-top:48px;padding-left:56px;max-width:560px}
 .os-card .os-num{
-  position:absolute;top:-27px;right:0;width:52px;height:52px;background:var(--bg);
-  border:1px solid var(--accent);border-top:none;
+  position:absolute;top:-1px;right:0;width:52px;height:52px;
+  border:1px solid var(--accent);
   display:flex;align-items:center;justify-content:center;
   color:var(--accent);font-size:.9rem;
 }
