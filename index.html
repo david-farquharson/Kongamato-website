@@ -134,8 +134,11 @@
   <div class="tagline"><i></i>Kongamato — Aviation Innovations</div>
 
   <div class="top-right">
-    <span class="label">Menu</span>
-    <div class="burger"><span></span><span></span><span></span></div>
+    <span class="lang"><a href="#" data-lang="en"><b>EN</b></a><span>·</span><a href="#" data-lang="es">ES</a></span>
+    <div class="menu-row">
+      <span class="label" data-i18n="menu">Menu</span>
+      <div class="burger"><span></span><span></span><span></span></div>
+    </div>
   </div>
 
   <div class="controls">
@@ -160,8 +163,10 @@
   </div>
 
   <div class="brand">
-    <img class="mark" src="assets/g11-5.webp" alt="Kongamato logo">
-    <span class="name">kongamato</span>
+    <a href="index.html" aria-label="Kongamato home" style="display:flex;align-items:center;gap:inherit;text-decoration:none;color:inherit">
+      <img class="mark" src="assets/g11-5.webp" alt="Kongamato logo">
+      <span class="name">kongamato</span>
+    </a>
   </div>
 
   <!-- page counter: freely positionable via .counter-pos in style.css -->
@@ -170,8 +175,7 @@
   </div>
 
   <div class="foot-right">
-    <span class="lang"><a href="#"><b>EN</b></a><span>·</span><a href="#">ES</a></span>
-    <a class="ret" href="#">© <span id="yr">2026</span>  |   All Rights Reserved   |  <b>kongamato</b></a>
+    <span class="ret">© <span id="yr">2026</span>  |   <span data-i18n="rights">All Rights Reserved</span>   |  <a href="contact.html" id="contact-link"><b data-i18n="contactUs">Contact Us</b></a></span>
     <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
   </div>
 </div>
@@ -185,11 +189,13 @@
   <div class="pct">000 %</div>
 </div>
 
-<!-- Three.js r149 UMD build: exposes a global THREE, so this page works
-     straight from the file system with no server and no build step. -->
-<script src="https://unpkg.com/three@0.149.0/build/three.min.js"></script>
+<!-- Three.js r149 UMD build (self-hosted): exposes a global THREE. Served
+     locally so the page never depends on an external CDN being reachable. -->
+<script src="js/three.min.js"></script>
 <script src="js/GLTFLoader.js"></script>
+<script src="js/DRACOLoader.js"></script>
 <script src="js/scenes.js"></script>
 <script src="js/app.js"></script>
+<script src="js/i18n.js"></script>
 </body>
 </html>

@@ -68,36 +68,64 @@ function setOSOverlay(id){
 const counterEl = document.querySelector('.counter');
 function setCounter(n){
   counterEl.querySelector('.cur b').textContent = String(n + 1).padStart(2, '0');
-  counterEl.querySelector('.nxt b').textContent = String((n + 1) % SCENES.length + 1).padStart(2, '0');
+  // right number = total page count (menu length: scenes + Contact) — stays fixed
+  counterEl.querySelector('.nxt b').textContent = String(SCENES.length + 1).padStart(2, '0');
   counterEl.classList.remove('roll');
   void counterEl.offsetWidth;              // restart the animation
   counterEl.classList.add('roll');
 }
 
-/* build menu */
+/* localized title/body for a scene (i18n.js provides window.sceneText;
+   fall back to the English source in SCENES if i18n hasn't loaded yet) */
+function textFor(def){
+  return (typeof window.sceneText === 'function') ? window.sceneText(def)
+                                                  : { title: def.title, body: def.body };
+}
+
+/* build menu (rebuildable so language switches update the labels) */
 const menuList = document.querySelector('.menu ol');
-SCENES.forEach((def, i) => {
-  const li = document.createElement('li');
-  li.innerHTML = `<a href="#${def.id}">${def.title}</a>`;
-  li.querySelector('a').onclick = e => {
-    e.preventDefault();
-    document.body.classList.remove('menu-open');
-    go(i);
-  };
-  menuList.appendChild(li);
-});
+function buildMenu(){
+  menuList.innerHTML = '';
+  SCENES.forEach((def, i) => {
+    const li = document.createElement('li');
+    const t = textFor(def).title;
+    li.innerHTML = `<a href="#${def.id}">${t}</a>`;
+    li.querySelector('a').onclick = e => {
+      e.preventDefault();
+      document.body.classList.remove('menu-open');
+      go(i);
+    };
+    menuList.appendChild(li);
+  });
+  // Page 6 — Contact (a separate page, so a real link, not a scene jump)
+  const contactLi = document.createElement('li');
+  const contactLabel = (typeof window.i18nContactLabel === 'string') ? window.i18nContactLabel : 'Contact';
+  contactLi.innerHTML = `<a href="contact.html">${contactLabel}</a>`;
+  menuList.appendChild(contactLi);
+}
+buildMenu();
+window.rerenderMenu = buildMenu;
+
+/* re-apply the current scene's copy (called by i18n.js on language switch) */
+window.rerenderCopy = function(){
+  setCopy(SCENES[index]);
+  const ov = document.getElementById('osscroll');
+  // keep the overlay open state consistent after its HTML was swapped
+  setOSOverlay(SCENES[index].id);
+};
 
 /* ---------------- title: split into animated letters ---------------- */
 function setCopy(def){
+  const loc = textFor(def);
   titleEl.innerHTML = '';
-  [...def.title].forEach((ch, i) => {
+  [...loc.title].forEach((ch, i) => {
     const s = document.createElement('span');
     s.className = 'ch';
     s.textContent = ch === ' ' ? '\u00A0' : ch;
     s.style.transitionDelay = (0.12 + i * 0.045) + 's';
     titleEl.appendChild(s);
   });
-  bodyEl.innerHTML = def.body;   // innerHTML so <br> etc. in body text render properly
+  bodyEl.innerHTML = loc.body;   // innerHTML so <br> etc. in body text render properly
   // per-scene placement of the .copy block (falls back to style.css .copy)
   const p = def.copyPos || {};
   copyEl.style.left     = p.left     ?? '';
@@ -143,6 +171,7 @@ function go(n, dir = 1){
   setTimeout(() => {
     from.visible = false;
     to.visible = true;
+    if (to.userData.lazyLoad) to.userData.lazyLoad();   // fetch/decode models on first visit
     to.rotation.y = dir * 0.5;              // enter offset, eased back to 0
     to.position.y = -dir * 26;
 
@@ -217,7 +246,11 @@ document.getElementById('cue-link').onclick = e => {
 };
 
 document.getElementById('ctrl-prev').onclick = () => go(index - 1, -1);
-document.getElementById('ctrl-next').onclick = () => go((index + 1) % SCENES.length, 1);  // wraps to first page
+document.getElementById('ctrl-next').onclick = () => {
+  // last scene → Contact page (#6); otherwise advance to the next scene
+  if (index === SCENES.length - 1) location.href = 'contact.html';
+  else go(index + 1, 1);
+};
 
 /* ---------------- resize ---------------- */
 addEventListener('resize', () => {
@@ -306,6 +339,7 @@ function boot(){
   const start = Math.max(0, SCENES.findIndex(s => s.id === hash));
   index = start;
   groups[start].visible = true;
+  if (groups[start].userData.lazyLoad) groups[start].userData.lazyLoad();
   const def = SCENES[start];
   camTarget.set(...def.cam);
   camPos.set(def.cam[0], def.cam[1], def.cam[2] + 220);   // fly-in

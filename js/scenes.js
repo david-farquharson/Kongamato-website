@@ -38,15 +38,16 @@ function buildEnvironment(){
   // grid.material.opacity = .55;
   // g.add(grid);
 
-  // dark scrim plane between terrain (far, z=-80) and aircraft (near, z=150):
-  // darkens the terrain but the nearer aircraft renders in front of it
+  // LAYER 3 — dark shade (scrim). Sits between the aircraft (front) and the
+  // terrain (back). depthTest:true so the opaque aircraft occludes it (aircraft
+  // stays in front); renderOrder puts it above terrain + ribbons.
   const scrim = new THREE.Mesh(
     new THREE.PlaneGeometry(4000, 2500),
     new THREE.MeshBasicMaterial({ color:0x05070f, transparent:true, opacity:.70,
       depthWrite:false, depthTest:true })
   );
   scrim.position.set(0, 0, 100);
-  scrim.renderOrder = 1;
+  scrim.renderOrder = -10;
   g.add(scrim);
 
   // faint upper grid (ceiling) for enclosed feel
@@ -56,7 +57,8 @@ function buildEnvironment(){
   top.material.opacity = .18;
   g.add(top);
 
-  // horizon wave ribbons — long thin plane strips deformed by sine noise
+  // LAYER 5 (back) — horizon wave ribbons. Lowest renderOrder so within the
+  // transparent pass they sort first / farthest back.
   const waves = [];
   for (let i = 0; i < 5; i++){
     const geo = new THREE.PlaneGeometry(1100, 60, 160, 6);
@@ -65,6 +67,7 @@ function buildEnvironment(){
     m.rotation.x = -Math.PI / 2 + 0.16;
     m.position.set(0, 6 + i * 7 - 45, -120 - i * 55);  // -45 world units ≈ 100px down
     m.userData.seed = i * 1.7;
+    m.renderOrder = -30;
     g.add(m);
     waves.push(m);
   }
@@ -128,10 +131,27 @@ function sceneRover(){
    Scene 5 — PROTECT : Synergy aircraft gltf over rugged mountain gltf
    ========================================================== */
 const GLTF_ASSETS = {
-  aircraft:  'assets/synergy_full.glb',
-  mountains: 'assets/rugged_mountain_landscape/rugged_mountain_landscape.gltf'
+  aircraft:  'assets/synergy_full.opt.glb',
+  mountains: 'assets/rugged_mountain_landscape.opt.glb'
 };
 const gltfLoader = new THREE.GLTFLoader();
+// Draco decoder: the optimized .glb files are geometry-compressed.
+const dracoLoader = new THREE.DRACOLoader();
+dracoLoader.setDecoderPath('js/draco/');
+dracoLoader.setDecoderConfig({ type: 'js' });   // wasm auto-used when available
+gltfLoader.setDRACOLoader(dracoLoader);
+
+/* Shared model cache: every terrain/aircraft scene reuses ONE decoded gltf
+   (cloned per scene) instead of re-downloading + re-decoding per scene. */
+const _gltfCache = new Map();
+function loadGLTF(url){
+  if (!_gltfCache.has(url)){
+    _gltfCache.set(url, new Promise((resolve, reject) => {
+      gltfLoader.load(url, gltf => resolve(gltf.scene), undefined, err => { gltfError(url)(err); reject(err); });
+    }));
+  }
+  return _gltfCache.get(url);
+}
 const MOUNTAIN_OFFSET_X = -70;   // shift mountains left so the mass sits centered
 
 /** Debug: surface asset load failures on-screen + console. */
@@ -164,11 +184,21 @@ function sceneCessnaTerrain(opts = {}){
   const floorRings = opts.floorRings ?? false;     // gold contour rings on the floor?
   const g = new THREE.Group();
 
+  // Lazy: models are only fetched/decoded the first time this scene is shown.
+  // app.js calls g.userData.lazyLoad() on first visibility. Shared cache means
+  // the terrain + aircraft download + decode ONCE and are cloned per scene.
+  let loaded = false;
+  g.userData.lazyLoad = function(){
+    if (loaded) return; loaded = true;
+
   // --- mountains: rugged landscape gltf — full stage width, bottom 2/3,
   //     tilted down ~10% ---
-  gltfLoader.load(GLTF_ASSETS.mountains, gltf => {
-    const m = gltf.scene;
+  loadGLTF(GLTF_ASSETS.mountains).then(src => {
+    const m = src.clone(true);
     wireframeify(m, 0x4D4D4D, opts.terrainOpacity ?? .35);   // mountains in 30% gray (per-scene overridable)
+    // LAYER 4 — terrain mesh: keep depthTest ON so the nearer aircraft occludes
+    // it (aircraft renders in front). renderOrder puts it behind the shade.
+    m.traverse(o => { if (o.isLineSegments || o.isMesh){ o.renderOrder = -20; } });
     // normalize: scale so model width spans the full stage
     let box = new THREE.Box3().setFromObject(m);
     const size = box.getSize(new THREE.Vector3());
@@ -184,14 +214,12 @@ function sceneCessnaTerrain(opts = {}){
     g.add(wrap);
     // animated rotation of the terrain around its centre axis (see app.js frame loop)
     if (terrainRot) g.userData.terrainSpin = { obj: wrap, target: THREE.MathUtils.degToRad(terrainRot) };
-    console.log('mountains loaded, size:', size);
-  }, undefined, gltfError(GLTF_ASSETS.mountains));
+  });
 
   // --- foreground: Synergy aircraft (solid body, from synergy.blend) ---
-  const plane = new THREE.Group();
   if (aircraft){
-  gltfLoader.load(GLTF_ASSETS.aircraft, gltf => {
-    const jet = gltf.scene;
+  loadGLTF(GLTF_ASSETS.aircraft).then(src => {
+    const jet = src.clone(true);
     // Blender-exported materials are used as-is (colours baked in the .glb)
     // lighting rig on the unscaled parent so it always points at the plane
     plane.add(new THREE.AmbientLight(0xffffff, .5));
@@ -211,9 +239,16 @@ function sceneCessnaTerrain(opts = {}){
     jet.rotation.order = 'YXZ';
     jet.rotation.y = THREE.MathUtils.degToRad(250);
     jet.rotation.x = THREE.MathUtils.degToRad(-10);
+    // LAYER 2 (front) — aircraft: draws in front of the dark shade.
+    jet.traverse(o => { if (o.isMesh){ o.renderOrder = 10; } });
     plane.add(jet);
-    console.log('aircraft loaded, size:', size);
-  }, undefined, gltfError(GLTF_ASSETS.aircraft));
+  });
+  }
+  }; // end lazyLoad
+
+  // aircraft container is created synchronously so hover/accent refs exist
+  const plane = new THREE.Group();
+  if (aircraft){
   plane.position.set(-80, 10, 150);  // z=150: well in front of the mountains
   g.add(plane);
   g.userData.accent = plane;
@@ -298,37 +333,38 @@ function sceneOverture(){
 const SCENES = [
   {
     id:'what_we_do', label:'what_we_do', title:'What We Do',
-body:'Kongamato is building toward end-to-end capability: an aircraft designed, built, and flown under one roof, with the tools and training pipeline that make that repeatable. The stages below describe the full scope we are working toward.<br><b>Design: </b>Conceptual sizing, aerodynamics, structures, systems, and avionics — supported by our own simulation tools. This is where Design Studio already operates: constraint diagrams, drag polars, load envelopes, and CFD, running today.<br><b>Build: </b>Tooling, composite part fabrication, assembly, and systems integration. Bringing airframe manufacture in-house is what closes the loop between a design change and a flying article.<br><b>Education and Research: </b>Research and development, flight and ground testing, and STEM mentorship. We treat training as core work, not outreach.',
-    copyPos:{ right:'381px', bottom:'150px',  maxWidth:'630px' },   // <-- this scene's text position
+    body:'Kongamato is building toward end-to-end capability: an aircraft designed, built, and flown under one roof, with the tools and training pipeline that make that repeatable. The stages below describe the full scope we are working toward.<br><b>Design: </b>Conceptual sizing, aerodynamics, structures, systems, and avionics — supported by our own simulation tools. This is where Design Studio already operates: constraint diagrams, drag polars, load envelopes, and CFD, running today.<br><b>Build: </b>Tooling, composite part fabrication, assembly, and systems integration. Bringing airframe manufacture in-house is what closes the loop between a design change and a flying article.<br><b>Education and Research: </b>Research and development, flight and ground testing, and STEM mentorship. We treat training as core work, not outreach.',
+    copyPos:{ right:'200px', bottom:'150px',  maxWidth:'630px' },   // <-- this scene's text position
     cuePos:{ left:'600px', bottom:'200px' },                    // <-- this scene's \"scroll to discover\" position
     cam:[0, 30, 250], look:[0, 10, 0], build:sceneSlider
   },
   {
     id:'design_studio', label:'design_studio', title:'Design Studio',
-    body:'Runs offline from a single HTML file. No libraries, no build step, no network — open it and it works. Aircraft Design Studio is a browser-based conceptual-design workbench for aircraft and drones, with nine linked analysis tabs covering the sizing calculations aerospace engineers actually use: constraint diagrams, drag polars, V-n envelopes, weight and CG build-up, and stability derivatives. Every tab shares one design state, so changing gross weight propagates through the geometry, performance, and structural envelope at once. The ninth tab is a live Lattice-Boltzmann CFD wind tunnel — upload any STL or OBJ and it voxelizes the mesh onto a D3Q19 lattice, solves transient viscous flow on the GPU, and returns lift and drag by momentum exchange alongside a full ISA atmosphere solution.',
-    copyPos:{ right:'400px', bottom:'150px', maxWidth:'500px' },   // <-- this scene's text position
+    body:'Runs offline from a single HTML file. No libraries, no build step, no network, open it and it works. Aircraft Design Studio is a browser-based conceptual-design workbench for aircraft and drones, with nine linked analysis tabs covering the sizing calculations aerospace engineers actually use: constraint diagrams, drag polars, V-n envelopes, weight and CG build-up, and stability derivatives. Every tab shares one design state, so changing gross weight propagates through the geometry, performance, and structural envelope at once. The ninth tab is a live Lattice-Boltzmann CFD wind tunnel; upload any STL or OBJ and it voxelizes the mesh onto a D3Q19 lattice, solves transient viscous flow on the GPU, and returns lift and drag by momentum exchange alongside a full ISA atmosphere solution.',
+    copyPos:{ right:'200px', bottom:'150px', maxWidth:'500px' },   // <-- this scene's text position
     // cuePos:{ left:'900px', top:'-100px' },                          
     cam:[10, 46, 165], look:[6, 8, 0], build:sceneProtect
   },
-  {
-    id:'open_source', label:'open_source', title:'Open Source',
-    body:'Everything Kongamato builds is released under Apache 2.0: the tools, the avionics, the airframe data. Below is the current state of the code, what we have validated it against, and where it breaks. We publish the limits alongside the capabilities because avionics that hold lives should be auditable by anyone who wants to check the work.  This page is a living document. It reflects what exists today, not what we intend to build.',
-    copyPos:{ left:'300px', bottom:'300px' , maxWidth:'530px' },   // <-- this scene's text position
-    cuePos:{ bottom:'200px' },                    // <-- this scene's \"scroll to discover\" position
-    cam:[-14, 34, 205], look:[8, 4, 0], build:sceneInspect
-  },
-  {
-    id:'training', label:'training', title:'Training and STEM',
-    body:'Aviation has a pipeline problem: the tools that teach real aircraft design are expensive, licensed, and locked to institutions that can afford them. Ours runs in a browser, offline, for free.<b>For students.</b> Design Studio puts the same sizing calculations used in professional practice; constraint diagrams, drag polars, V-n envelopes, stability derivatives, CFD; in front of any high school or college student with a laptop. No license, no install, no lab requirement. Paired with mentorship, it gives students a path from first sketch to a design they can defend. <b>For professionals.</b> Structured training across the full design-build cycle, from conceptual sizing through composite fabrication and systems integration, for engineers moving into experimental and unmanned aviation. Everything we build is released under Apache 2.0. Avionics that hold lives should be auditable by anyone who wants to check the work; and tools that teach should be available to anyone who wants to learn.',    //body:'Aviation has a pipeline problem: the tools that teach real aircraft design are expensive, licensed, and locked to institutions that can afford them. Ours runs in a browser, offline, for free.<br><br><b>For students.</b> Design Studio puts the same sizing calculations used in professional practice; constraint diagrams, drag polars, V-n envelopes, stability derivatives, CFD; in front of any high school or college student with a laptop. No license, no install, no lab requirement. Paired with mentorship, it gives students a path from first sketch to a design they can defend.<br><br><b>For professionals.</b> Structured training across the full design-build cycle, from conceptual sizing through composite fabrication and systems integration, for engineers moving into experimental and unmanned aviation.<br><br>Everything we build is released under Apache 2.0. Avionics that hold lives should be auditable by anyone who wants to check the work; and tools that teach should be available to anyone who wants to learn.',
-    copyPos:{ left:'200px', bottom:'140px', maxWidth:'630px' },   // <-- this scene's text position
-    //cuePos:{ top:'-100px' },                 // <-- this scene's \"scroll to discover\" position
-    cam:[36, 40, 235], look:[6, -4, 0], build:sceneSimulate
-  },
-  {
+    {
     id:'avionics', label:'avionics', title:'Avionics',
     body:'Kongamato is building an open-source, full-stack avionics platform for experimental aviation: a glass cockpit, an AR smart-glasses HUD, and an autopilot commanded by plain voice or text. The target capability set includes auto takeoff and landing, nearest-airport diversion, wind-aware pattern work, and traffic and obstacle awareness; supervised from the panel or the HUD, and overridable by the Pilot in Command at all times.',
     copyPos:{ left:'300px', bottom:'300px' },   // <-- this scene's text position
     // cuePos:{ top:'-100px' },                    // <-- this scene's \"scroll to discover\" position
     cam:[-26, 52, 210], look:[10, 6, 0], build:sceneScout
+  },
+  {
+    id:'open_source', label:'open_source', title:'Open Source',
+    body:'Everything Kongamato builds is released under Apache 2.0: the tools, the avionics, the airframe data. Below is the current state of the code, what we have validated it against, and where it breaks. We publish the limits alongside the capabilities because avionics that hold lives should be auditable by anyone who wants to check the work.  This page is a living document. It reflects what exists today, not what we intend to build.',
+    copyPos:{ left:'300px', bottom:'300px' , maxWidth:'530px' },   // <-- this scene's text position
+    cuePos:{ right:'100px', bottom:'200px' },                    // <-- this scene's \"scroll to discover\" position
+    cam:[-14, 34, 205], look:[8, 4, 0], build:sceneInspect
+  },
+  {
+    id:'training', label:'training', title:'Training and STEM',
+    body:'Aviation has a pipeline problem: the tools that teach real aircraft design are expensive, licensed, and locked to institutions that can afford them. Ours runs in a browser, offline, for free.<b>For students.</b> Design Studio puts the same sizing calculations used in professional practice; constraint diagrams, drag polars, V-n envelopes, stability derivatives, CFD; in front of any high school or college student with a laptop. No license, no install, no lab requirement. Paired with mentorship, it gives students a path from first sketch to a design they can defend. <b>For professionals.</b> Structured training across the full design-build cycle, from conceptual sizing through composite fabrication and systems integration, for engineers moving into experimental and unmanned aviation. Everything we build is released under Apache 2.0. Avionics that hold lives should be auditable by anyone who wants to check the work; and tools that teach should be available to anyone who wants to learn.',    //body:'Aviation has a pipeline problem: the tools that teach real aircraft design are expensive, licensed, and locked to institutions that can afford them. Ours runs in a browser, offline, for free.<br><br><b>For students.</b> Design Studio puts the same sizing calculations used in professional practice; constraint diagrams, drag polars, V-n envelopes, stability derivatives, CFD; in front of any high school or college student with a laptop. No license, no install, no lab requirement. Paired with mentorship, it gives students a path from first sketch to a design they can defend.<br><br><b>For professionals.</b> Structured training across the full design-build cycle, from conceptual sizing through composite fabrication and systems integration, for engineers moving into experimental and unmanned aviation.<br><br>Everything we build is released under Apache 2.0. Avionics that hold lives should be auditable by anyone who wants to check the work; and tools that teach should be available to anyone who wants to learn.',
+    copyPos:{ Right:'200px', bottom:'140px', maxWidth:'630px' },   // <-- this scene's text position
+    //cuePos:{ top:'-100px' },                 // <-- this scene's \"scroll to discover\" position
+    cam:[36, 40, 235], look:[6, -4, 0], build:sceneSimulate
   }
+
 ];

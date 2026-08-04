@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kongamato — Contact</title>
+<link rel="icon" type="image/webp" href="assets/g11-5.webp">
+<link rel="apple-touch-icon" href="assets/g11-5.webp">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="page-contact">
+
+<!-- WebGL stage: same terrain scene as the Training page -->
+<div id="stage"></div>
+<div class="atmos"></div>
+<!-- subtle dark shade + grid lines over the 3D stage -->
+<div class="page-grid"></div>
+
+<!-- ============ CONTACT ============ -->
+<article id="contactscroll" class="open">
+  <div class="os-grid"></div>
+
+  <header class="os-hero">
+    <h1 id="contact-title">Contact Us</h1>
+    <div class="os-intro">
+      <p data-i18n="contactIntro">Kongamato is based in the aviation business district of Wichita, Kansas — the Air Capital of the World. Reach us by phone or email, or find us on the map below.</p>
+    </div>
+  </header>
+
+  <section class="os-sec">
+    <div class="os-kicker" data-i18n="contactReach">Reach us</div>
+    <div class="contact-cards">
+      <div class="contact-card">
+        <div class="contact-label" data-i18n="contactEmail">Email</div>
+        <p><a href="mailto:info@kongamato.aero">info@kongamato.aero</a></p>
+      </div>
+      <div class="contact-card">
+        <div class="contact-label" data-i18n="contactPhone">Phone</div>
+        <p><a href="tel:+13165550142">+1 (316) 555-0142</a></p>
+      </div>
+      <div class="contact-card">
+        <div class="contact-label" data-i18n="contactAddress">Address</div>
+        <p>2201 George Washington Blvd<br>Wichita, KS 67210<br>United States</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="os-sec contact-map-sec">
+    <div class="os-kicker" data-i18n="contactFindUs">Find us</div>
+    <div class="contact-map">
+      <iframe
+        title="Kongamato location — Wichita, Kansas"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+        src="https://www.openstreetmap.org/export/embed.html?bbox=-97.3200%2C37.6300%2C-97.2400%2C37.6800&amp;layer=mapnik&amp;marker=37.6550%2C-97.2800">
+      </iframe>
+    </div>
+    <p class="os-note"><a href="https://www.openstreetmap.org/?mlat=37.6550&amp;mlon=-97.2800#map=14/37.6550/-97.2800" target="_blank" rel="noopener" data-i18n="contactLargerMap">View larger map</a></p>
+  </section>
+</article>
+<!-- ============ /CONTACT ============ -->
+
+<!-- HUD (static — no scene controls on this page) -->
+<div class="hud hud-static">
+  <div class="tagline"><i></i>Kongamato — Aviation Innovations</div>
+
+  <div class="top-right">
+    <span class="lang"><a href="#" data-lang="en"><b>EN</b></a><span>·</span><a href="#" data-lang="es">ES</a></span>
+    <div class="menu-row">
+      <span class="label" data-i18n="menu">Menu</span>
+      <div class="burger"><span></span><span></span><span></span></div>
+    </div>
+  </div>
+
+  <!-- prev: back to Training · next: home (index.html) -->
+  <div class="controls">
+    <a class="ctrl nav prev" href="index.html#training" title="Previous page">
+      <svg viewBox="0 0 24 24"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>
+    </a>
+    <a class="ctrl nav next" href="index.html" title="Home">
+      <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+    </a>
+  </div>
+
+  <div class="brand">
+    <a href="index.html" aria-label="Kongamato home" style="display:flex;align-items:center;gap:inherit;text-decoration:none;color:inherit">
+      <img class="mark" src="assets/g11-5.webp" alt="Kongamato logo">
+      <span class="name">kongamato</span>
+    </a>
+  </div>
+
+  <div class="foot-right">
+    <span class="ret">© <span id="yr">2026</span>  |   <span data-i18n="rights">All Rights Reserved</span>   |  <a href="index.html"><b data-i18n="home">Home</b></a></span>
+    <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+  </div>
+</div>
+
+<!-- fullscreen menu: links back to the experience scenes -->
+<div class="menu"><ol>
+  <li><a href="index.html#what_we_do">What We Do</a></li>
+  <li><a href="index.html#design_studio">Design Studio</a></li>
+  <li><a href="index.html#open_source">Open Source</a></li>
+  <li><a href="index.html#training">Training and STEM</a></li>
+  <li><a href="index.html#avionics">Avionics</a></li>
+</ol></div>
+
+<!-- three.js background: reuses the site's scene builders -->
+<script src="js/three.min.js"></script>
+<script src="js/GLTFLoader.js"></script>
+<script src="js/DRACOLoader.js"></script>
+<script src="js/scenes.js"></script>
+<script src="js/contact-stage.js"></script>
+<script src="js/i18n-contact.js"></script>
+</body>
+</html>

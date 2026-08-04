@@ -55,13 +55,21 @@ canvas{display:block}
 
 .top-right{
   position:absolute;top:48px;right:56px;
-  display:flex;align-items:center;gap:26px;
+  display:flex;align-items:center;gap:74px;   /* <-- horizontal space between EN·ES and Menu */
 }
 .top-right .label{
   font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);
   transition:color .3s;
 }
+.top-right .menu-row{display:flex;align-items:center;gap:16px}
 .top-right:hover .label{color:#fff}
+.top-right .lang{
+  font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);
+  display:inline-flex;align-items:center;
+}
+.top-right .lang a{color:var(--dim);text-decoration:none;transition:color .3s}
+.top-right .lang a:hover{color:#fff}
+.top-right .lang a.active,.top-right .lang a.active b{color:var(--accent)}
 .burger{
   width:34px;height:16px;position:relative;cursor:pointer;
 }
@@ -152,14 +160,42 @@ body.menu-open .burger span:nth-child(3){transform:translateY(-7px) rotate(-45de
     linear-gradient(90deg,var(--line) 1px,transparent 1px) 69% 0/25% 100% no-repeat;
 }
 
-/* ---------- Open Source: scrollable long-form overlay ---------- */
-#osscroll{
+/* ---------- Open Source / Contact: scrollable long-form overlays ---------- */
+#osscroll,#contactscroll{
   position:absolute;inset:0;z-index:3;overflow-y:auto;overscroll-behavior:contain;
-  background:rgba(5,7,15,.80);
+  background:rgba(5,7,15,.60);
   opacity:0;pointer-events:none;transition:opacity .6s;
   scrollbar-width:thin;scrollbar-color:var(--line) transparent;
 }
-#osscroll.open{opacity:1;pointer-events:auto}
+#osscroll.open,#contactscroll.open{opacity:1;pointer-events:auto}
+#contactscroll > *:not(.os-grid){position:relative;max-width:880px;margin:0 auto;padding-left:24px;padding-right:24px}
+
+/* Contact page: tighter vertical rhythm + smaller hero than Open Source */
+#contactscroll .os-hero{padding-top:30vh;padding-bottom:1.8vh}   /* gap to intro: 70% less */
+#contactscroll .os-hero h1{font-size:clamp(2rem,4vw,3.1rem);letter-spacing:.2em}
+#contactscroll .os-intro{margin-top:3.5vh}                       /* title → intro: 50% less */
+#contactscroll .os-sec{padding-top:1.5vh;padding-bottom:3vh}     /* intro → Reach us: 70% less */
+#contactscroll .os-kicker{margin-bottom:2vh}
+#contactscroll .contact-map-sec{padding-top:1.5vh}              /* Reach us → Find us: brought up */
+
+/* contact cards: same visual language as .os-card, laid out in a row */
+.contact-cards{display:flex;flex-wrap:wrap;gap:6vh 48px;margin:2vh 0}
+.contact-card{flex:1 1 200px;min-width:200px;border-top:1px solid var(--accent);padding-top:26px}
+.contact-label{
+  font-size:.78rem;font-weight:400;letter-spacing:.26em;text-transform:uppercase;
+  color:var(--accent);margin-bottom:1.4em;
+}
+.contact-card p{font-size:.9rem;line-height:1.9;color:var(--dim);margin:0}
+.contact-card a{color:var(--dim);text-decoration:none;border-bottom:1px solid transparent;transition:border-color .3s,color .3s}
+.contact-card a:hover{color:#fff;border-color:var(--accent)}
+
+/* map: always grayscale to match the site palette */
+.contact-map{
+  border:1px solid var(--line);margin-top:1vh;
+  filter:grayscale(1) contrast(1.05) brightness(.85);
+}
+.contact-map iframe{display:block;width:100%;height:420px;border:0}
+.contact-map-sec{padding-bottom:16vh}
 .os-grid{
   position:fixed;inset:0;pointer-events:none;
   background:
@@ -230,7 +266,8 @@ body.menu-open .burger span:nth-child(3){transform:translateY(-7px) rotate(-45de
   /*  position:absolute;left:488px;bottom:118px;max-width:430px; ---- old position*/
 }
 .copy h1{
-  font-size:clamp(2.1rem,3.6vw,3.05rem);
+  font-size:clamp(1.6rem, 2.8vw, 2.4rem); 
+  // font-size:clamp(2.1rem,3.6vw,3.05rem); /* clamp(1.6rem, 2.8vw, 2.4rem) */
   font-weight:300;letter-spacing:.18em;line-height:1;
   margin-bottom:34px;text-transform:uppercase;
   display:flex;flex-wrap:wrap;
@@ -255,14 +292,14 @@ body.menu-open .burger span:nth-child(3){transform:translateY(-7px) rotate(-45de
   position:absolute;left:62px;bottom:46px;
   display:flex;align-items:center;gap:14px;
 }
-.brand .mark{width:42px;height:42px;object-fit:contain}
+.brand .mark{width:32px;height:32px;object-fit:contain}
 .brand .name{
   font-size:1.5rem;font-weight:400;letter-spacing:.02em;
 }
 .foot-right{
   position:absolute;right:56px;bottom:52px;
   display:flex;align-items:center;gap:34px;
-  font-size:.7rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);
+  font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);
 }
 .lang b{color:#fff;font-weight:400}
 .lang span{opacity:.45;margin:0 6px}

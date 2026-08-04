@@ -1,0 +1,39 @@
+# ==========================================================
+# Apache config — gzip/brotli compression + long cache headers
+# Drop-in for Apache / most shared hosting (cPanel etc.)
+# ==========================================================
+
+# ---- Compression ----
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/json image/svg+xml
+  # .glb/.gltf/.wasm are also worth compressing (Draco glb compresses ~10-20% more)
+  AddOutputFilterByType DEFLATE model/gltf-binary model/gltf+json application/wasm application/octet-stream
+</IfModule>
+
+# Prefer Brotli when the module is available (much better than gzip for text)
+<IfModule mod_brotli.c>
+  AddOutputFilterByType BROTLI_COMPRESS text/html text/css text/javascript application/javascript application/json image/svg+xml model/gltf-binary model/gltf+json application/wasm
+</IfModule>
+
+# ---- Correct MIME types ----
+<IfModule mod_mime.c>
+  AddType model/gltf-binary  .glb
+  AddType model/gltf+json    .gltf
+  AddType application/wasm    .wasm
+</IfModule>
+
+# ---- Cache headers ----
+<IfModule mod_expires.c>
+  ExpiresActive On
+  # Immutable, content-addressable assets: cache hard for a year
+  ExpiresByType model/gltf-binary  "access plus 1 year"
+  ExpiresByType model/gltf+json    "access plus 1 year"
+  ExpiresByType application/wasm    "access plus 1 year"
+  ExpiresByType image/jpeg          "access plus 1 year"
+  ExpiresByType image/png           "access plus 1 year"
+  ExpiresByType image/webp          "access plus 1 year"
+  ExpiresByType text/css            "access plus 1 month"
+  ExpiresByType application/javascript "access plus 1 month"
+  # HTML: always revalidate so deploys show up immediately
+  ExpiresByType text/html           "access plus 0 seconds"
+</IfModule>

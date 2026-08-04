@@ -1,0 +1,10 @@
+# dependencies (build-only; not needed at runtime)
+node_modules/
+
+# macOS
+.DS_Store
+**/.DS_Store
+
+# temp
+*.log
+*.bak

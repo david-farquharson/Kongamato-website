@@ -1,0 +1,39 @@
+# ==========================================================
+# Nginx snippet — paste inside your server { } block.
+# Enables gzip (+ brotli if the module is compiled in) and long cache.
+# ==========================================================
+
+# ---- Compression ----
+gzip on;
+gzip_comp_level 6;
+gzip_min_length 1024;
+gzip_types text/plain text/css application/javascript application/json
+           image/svg+xml model/gltf-binary model/gltf+json application/wasm;
+
+# If you have the brotli module (ngx_brotli):
+# brotli on;
+# brotli_comp_level 6;
+# brotli_types text/plain text/css application/javascript application/json
+#              image/svg+xml model/gltf-binary model/gltf+json application/wasm;
+
+# ---- MIME types (add to mime.types or here) ----
+types {
+    model/gltf-binary  glb;
+    model/gltf+json    gltf;
+    application/wasm    wasm;
+}
+
+# ---- Cache: hash-named binary assets for a year ----
+location /assets/ {
+    add_header Cache-Control "public, max-age=31536000, immutable";
+}
+location /js/draco/ {
+    add_header Cache-Control "public, max-age=31536000, immutable";
+}
+location ~* \.(js|css)$ {
+    add_header Cache-Control "public, max-age=2592000";
+}
+# HTML always revalidates so deploys show up immediately.
+location = /index.html {
+    add_header Cache-Control "public, max-age=0, must-revalidate";
+}
