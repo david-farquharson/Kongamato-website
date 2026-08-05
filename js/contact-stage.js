@@ -5,8 +5,8 @@
    ========================================================== */
 
 const stage = document.getElementById('stage');
-const renderer = new THREE.WebGLRenderer({ antialias:true, alpha:false });
-renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+// Adaptive renderer (see perf.js) — same GPU-tier tuning as the main stage.
+const renderer = PERF.makeRenderer();
 renderer.setSize(innerWidth, innerHeight);
 renderer.setClearColor(0x05070f, 1);
 stage.appendChild(renderer.domElement);
@@ -51,7 +51,10 @@ addEventListener('resize', () => {
 });
 
 const clock = new THREE.Clock();
-function frame(){
+function frame(now){
+  requestAnimationFrame(frame);
+  if (!PERF.gate(now)) return;              // fps cap on low-end GPUs
+
   const t = clock.elapsedTime;
   animateEnvironment(env, t);
 
@@ -73,6 +76,5 @@ function frame(){
   g.rotation.x = Math.sin(t * .18) * .012;
 
   renderer.render(scene, camera);
-  requestAnimationFrame(frame);
 }
-frame();
+requestAnimationFrame(frame);   // rAF supplies the timestamp the fps gate needs
