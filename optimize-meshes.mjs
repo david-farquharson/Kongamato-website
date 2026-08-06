@@ -129,9 +129,13 @@ const out = name => DRY ? name.replace('.opt.glb', '.test.glb') : name;
 console.log(`Decimating meshes${DRY ? ' (dry run → *.test.glb)' : ''}...\n`);
 
 const jobs = [
-  // terrain: rendered as a dense wireframe → triangle count == line count.
-  // aggressive cut; borders locked so the 6 chunks never crack apart.
-  { src: 'assets/rugged_mountain_landscape.opt.glb', ratio: 0.10, error: 0.06, label: 'TERRAIN ' },
+  // terrain: rendered as a wireframe → triangle count == line count. Balanced
+  // cut (0.35): dense enough that the flat valley/skirt (~20% of the mesh) keeps
+  // subdivision instead of collapsing into big empty triangles + long lines
+  // (very visible in light mode), while still ~1/3 the original line count.
+  // Borders locked so the 6 chunks never crack apart; tight error preserves the
+  // flat regions. Re-run from the ORIGINAL mesh, not an already-decimated file.
+  { src: 'assets/rugged_mountain_landscape.opt.glb', ratio: 0.35, error: 0.01, label: 'TERRAIN ' },
   // aircraft: solid, lit hero model — conservative, visually lossless cut.
   { src: 'assets/synergy_full.opt.glb',              ratio: 0.55, error: 0.005, label: 'AIRCRAFT' },
 ];
