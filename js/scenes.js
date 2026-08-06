@@ -9,11 +9,20 @@ const ACCENT = 0xf6e500;
 const GHOST  = 0xffffff;
 
 /* ---------- shared material factory ---------- */
+/* Reads window.THEME (js/theme.js) so lines are built in the current theme's
+   colour + blending, and tags each material with a themeRole so THEME can
+   re-colour it live on toggle. Falls back to the original additive look if
+   THEME is absent. */
 function wire(color, opacity){
-  return new THREE.LineBasicMaterial({
-    color, transparent:true, opacity,
-    depthWrite:false, blending:THREE.AdditiveBlending
+  const T = window.THEME, t = T ? T.tok() : null;
+  const role = color === ACCENT ? 'accent' : 'ghost';
+  const m = new THREE.LineBasicMaterial({
+    color: t ? (role === 'accent' ? t.accent : t.ghost) : color,
+    transparent:true, opacity, depthWrite:false,
+    blending: (!T || T.additive()) ? THREE.AdditiveBlending : THREE.NormalBlending
   });
+  m.userData.themeRole = role;
+  return m;
 }
 
 /** Wireframe edges of any geometry. */
@@ -41,37 +50,37 @@ function buildEnvironment(){
   // LAYER 3 — dark shade (scrim). Sits between the aircraft (front) and the
   // terrain (back). depthTest:true so the opaque aircraft occludes it (aircraft
   // stays in front); renderOrder puts it above terrain + ribbons.
+  const _st = window.THEME ? window.THEME.tok() : null;
   const scrim = new THREE.Mesh(
     new THREE.PlaneGeometry(4000, 2500),
-    new THREE.MeshBasicMaterial({ color:0x05070f, transparent:true, opacity:.70,
-      depthWrite:false, depthTest:true })
+    new THREE.MeshBasicMaterial({ color:_st ? _st.scrim : 0x05070f, transparent:true,
+      opacity:_st ? _st.scrimOp : .70, depthWrite:false, depthTest:true })
   );
+  scrim.material.userData.themeRole = 'scrim';
   scrim.position.set(0, 0, 100);
   scrim.renderOrder = -10;
   g.add(scrim);
 
-  // faint upper grid (ceiling) for enclosed feel
-  const top = new THREE.GridHelper(900, 60, 0x1b2236, 0x11172a);
-  top.position.y = 150;
-  top.material.transparent = true;
-  top.material.opacity = .18;
-  g.add(top);
+  // NOTE: the faint ceiling grid and the horizon "wave ribbons" used to live
+  // here. Both are wide, flat, regularly-divided planes seen almost edge-on,
+  // so in perspective their parallel lines collapse into a hard "starburst"
+  // converging on the vanishing point — the empty fan of lines that read as an
+  // eyesore (especially in light mode). Removed for a cleaner horizon; the
+  // decimated terrain already carries the depth. Kept commented for easy revert.
+  //
+  //   const top = new THREE.GridHelper(900, 60, 0x1b2236, 0x11172a);
+  //   top.position.y = 150; top.material.transparent = true; top.material.opacity = .18;
+  //   g.add(top);
+  //
+  //   for (let i = 0; i < 5; i++){
+  //     const geo = new THREE.PlaneGeometry(1100, 60, 160, 6);
+  //     const m = new THREE.LineSegments(new THREE.WireframeGeometry(geo), wire(GHOST, .07 + i*0.025));
+  //     m.rotation.x = -Math.PI/2 + 0.16;
+  //     m.position.set(0, 6 + i*7 - 45, -120 - i*55);
+  //     m.userData.seed = i*1.7; m.renderOrder = -30; g.add(m); waves.push(m);
+  //   }
 
-  // LAYER 5 (back) — horizon wave ribbons. Lowest renderOrder so within the
-  // transparent pass they sort first / farthest back.
-  const waves = [];
-  for (let i = 0; i < 5; i++){
-    const geo = new THREE.PlaneGeometry(1100, 60, 160, 6);
-    const m = new THREE.LineSegments(new THREE.WireframeGeometry(geo),
-      wire(GHOST, .07 + i * 0.025));
-    m.rotation.x = -Math.PI / 2 + 0.16;
-    m.position.set(0, 6 + i * 7 - 45, -120 - i * 55);  // -45 world units ≈ 100px down
-    m.userData.seed = i * 1.7;
-    m.renderOrder = -30;
-    g.add(m);
-    waves.push(m);
-  }
-  g.userData.waves = waves;
+  g.userData.waves = [];   // no ribbons to animate → animateEnvironment no-ops
   return g;
 }
 
@@ -167,12 +176,15 @@ function gltfError(url){
 
 /** Swap every mesh material for the site's additive wireframe look. */
 function wireframeify(root, color, opacity){
+  const T = window.THEME, t = T ? T.tok() : null;
   root.traverse(o => {
     if (o.isMesh){
       o.material = new THREE.MeshBasicMaterial({
-        color, wireframe:true, transparent:true, opacity,
-        depthWrite:false, blending:THREE.AdditiveBlending
+        color: t ? t.terrain : color, wireframe:true, transparent:true, opacity,
+        depthWrite:false,
+        blending: (!T || T.additive()) ? THREE.AdditiveBlending : THREE.NormalBlending
       });
+      o.material.userData.themeRole = 'terrain';
     }
   });
 }

@@ -36,6 +36,9 @@ const groups = SCENES.map(def => {
   return g;
 });
 
+// apply the current theme to the renderer/scene (and future toggles)
+if (window.THEME) THEME.attach(renderer, scene);
+
 /* ---------------- state ---------------- */
 let index = 0;
 let animating = false;

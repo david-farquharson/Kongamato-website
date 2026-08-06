@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Kongamato — Contact</title>
+<!-- set the theme before first paint to avoid a flash (default: dark) -->
+<script>try{document.documentElement.setAttribute('data-theme',localStorage.getItem('kongamato-theme')||'dark')}catch(e){document.documentElement.setAttribute('data-theme','dark')}</script>
 <link rel="icon" type="image/webp" href="assets/g11-5.webp">
 <link rel="apple-touch-icon" href="assets/g11-5.webp">
 <link rel="stylesheet" href="css/style.css">
@@ -65,6 +67,12 @@
   <div class="tagline"><i></i>Kongamato — Aviation Innovations</div>
 
   <div class="top-right">
+    <button class="theme-toggle" type="button" aria-label="Toggle light or dark theme" title="Switch to light theme">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.5"/>
+        <path d="M12 3.2A8.8 8.8 0 0 1 12 20.8Z" fill="currentColor"/>
+      </svg>
+    </button>
     <span class="lang"><a href="#" data-lang="en"><b>EN</b></a><span>·</span><a href="#" data-lang="es">ES</a></span>
     <div class="menu-row">
       <span class="label" data-i18n="menu">Menu</span>
@@ -107,6 +115,7 @@
 <!-- three.js background: reuses the site's scene builders -->
 <script src="js/three.min.js"></script>
 <script src="js/perf.js"></script>
+<script src="js/theme.js"></script>
 <script src="js/GLTFLoader.js"></script>
 <script src="js/DRACOLoader.js"></script>
 <script src="js/scenes.js"></script>

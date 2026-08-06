@@ -28,6 +28,9 @@ g.visible = true;
 world.add(g);
 if (g.userData.lazyLoad) g.userData.lazyLoad();
 
+// apply the current theme to the renderer/scene (and future toggles)
+if (window.THEME) THEME.attach(renderer, scene);
+
 /* Training page camera framing. */
 const TRAIN_CAM  = [36, 40, 235];
 const TRAIN_LOOK = [6, -4, 0];
