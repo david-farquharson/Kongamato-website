@@ -56,12 +56,11 @@
     makeRenderer: function () {
       const r = new THREE.WebGLRenderer({
         antialias: this.antialias,
-        alpha: true,          // transparent canvas so the CSS .mesh-bg backdrop shows through
+        alpha: false,
         stencil: false,
         powerPreference: 'high-performance'   // prefer the discrete GPU on dual-GPU laptops
       });
       r.setPixelRatio(Math.min(window.devicePixelRatio || 1, this.dprCap));
-      r.setClearAlpha(0);
       return r;
     },
 

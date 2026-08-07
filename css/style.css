@@ -43,31 +43,14 @@ body{
 a{color:inherit;text-decoration:none}
 canvas{display:block}
 
-/* ---------- Wireframe-landscape backdrop (reference image) ---------- */
-/* contain = the WHOLE image is always visible (full length + width, no crop);
-   background-color fills any letterbox and is matched to the image edge per
-   theme via js/theme.js. Image + colour are set by THEME. */
-.mesh-bg{
-  position:fixed;inset:0;z-index:0;pointer-events:none;
-  background-repeat:no-repeat;background-position:center center;background-size:contain;
-  transition:opacity .6s ease;
-}
+/* ---------- Sky fill behind the 3D terrain ---------- */
+/* Solid theme colour behind the transparent HUD; the terrain itself is now
+   real WebGL geometry (js/terrain-mesh.js), not a backdrop image. */
+.mesh-bg{position:fixed;inset:0;z-index:0;pointer-events:none;background-color:#05070f}
 
-/* ---------- WebGL stage (transparent overlay for the aircraft) ---------- */
+/* ---------- WebGL stage ---------- */
 #stage{position:fixed;inset:0;z-index:1}
 #stage canvas{width:100%;height:100%}
-
-/* 3s intro reveal on each scene: zoom-in + 45° horizontal swing settling to
-   the resting framing. Applied to BOTH the backdrop and the canvas so the
-   terrain and the aircraft move together. Skipped via ?nointro. */
-.mesh-bg.scene-reveal,#stage.scene-reveal{
-  animation:sceneReveal 3s cubic-bezier(.19,.72,.24,1) both;
-  transform-origin:50% 56%;will-change:transform;
-}
-@keyframes sceneReveal{
-  from{transform:perspective(1600px) rotateY(-45deg) scale(1.5)}
-  to  {transform:perspective(1600px) rotateY(0deg) scale(1)}
-}
 
 /* vignette + scanline atmosphere over the 3D */
 .atmos{

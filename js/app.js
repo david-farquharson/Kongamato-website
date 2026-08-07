@@ -56,20 +56,14 @@ const bodyEl   = copyEl.querySelector('p');
 const hotLayer = document.getElementById('hotspots');
 const osOverlay = document.getElementById('osscroll');
 
-/* 3s intro reveal (zoom-in + 45° swing → resting view), replayed on each scene.
-   Applied to the backdrop AND canvas so terrain + aircraft move together.
-   Skipped with ?nointro (screenshots/tests). */
-const meshBgEl = document.querySelector('.mesh-bg');
+/* 3s intro reveal, replayed on each scene: the terrain starts zoomed in ~50%
+   and swung 45° horizontally, then smoothly eases to the resting framing.
+   Driven in the render loop (real 3D) via revealClock; skipped with ?nointro. */
 const noIntro = /[?&]nointro/.test(location.search);
-function playSceneReveal(){
-  if (noIntro) return;
-  [stage, meshBgEl].forEach(el => {
-    if (!el) return;
-    el.classList.remove('scene-reveal');
-    void el.offsetWidth;            // force reflow so the animation restarts
-    el.classList.add('scene-reveal');
-  });
-}
+const REVEAL_SECS = 3;
+let revealT = noIntro ? REVEAL_SECS : REVEAL_SECS;   // seconds elapsed (>=SECS ⇒ done)
+function playSceneReveal(){ if (!noIntro) revealT = 0; }
+const easeOutCubic = x => 1 - Math.pow(1 - x, 3);
 
 /* open_source scene: toggle the scrollable long-form overlay */
 function setOSOverlay(id){
@@ -291,6 +285,12 @@ function frame(now){
 
   animateEnvironment(env, t);
 
+  // intro reveal progress (0..1): 1 = settled at rest
+  if (revealT < REVEAL_SECS) revealT += dt;
+  const rk = easeOutCubic(Math.min(1, revealT / REVEAL_SECS));
+  const revealRot  = (1 - rk) * (Math.PI / 4);   // 45° swing → 0
+  const revealZoom = (1 - rk) * 0.42;            // dolly 42% toward the scene → 0
+
   // camera easing toward target + parallax
   smooth.x += (pointer.x - smooth.x) * .045;
   smooth.y += (pointer.y - smooth.y) * .045;
@@ -300,6 +300,7 @@ function frame(now){
     camPos.y - smooth.y * 14,
     camPos.z
   );
+  if (revealZoom > 0) camera.position.lerp(lookAt, revealZoom);   // zoom-in on reveal
   camera.lookAt(lookAt);
 
   // glitch burst on transition: subtle camera roll + fov kick
@@ -323,6 +324,9 @@ function frame(now){
     if (!g.visible) return;
     g.rotation.y += (0 - g.rotation.y) * .05;      // settle entry offset
     g.position.y += (0 - g.position.y) * .06;
+
+    // intro reveal: swing the terrain 45° → rest (real 3D rotation)
+    if (g.userData.terrainWrap) g.userData.terrainWrap.rotation.y = revealRot;
 
     const a = g.userData.accent;
     if (a){

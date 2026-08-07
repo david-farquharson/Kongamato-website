@@ -257,7 +257,16 @@ function sceneCessnaTerrain(opts = {}){
   g.userData.lazyLoad = function(){
     if (loaded) return; loaded = true;
 
-  // Terrain is the CSS .mesh-bg backdrop (reference image) — no 3D terrain here.
+  // --- terrain: REAL 3D wireframe heightfield built from the reference image
+  //     (js/terrain-mesh.js). Rotatable + theme-recolourable, unlike the flat
+  //     jpg it replaces. Sits behind the aircraft; recedes to the fogged horizon.
+  const terrainWrap = new THREE.Group();
+  terrainWrap.position.set(MOUNTAIN_OFFSET_X, -170, -560);
+  const terr = TerrainMesh.build({ seed: opts.seed, opacityScale: opts.opacityScale, amp: 300 });
+  terrainWrap.add(terr);
+  g.add(terrainWrap);
+  // expose for the intro reveal (zoom + 45° swing → rest) in app.js
+  g.userData.terrainWrap = terrainWrap;
 
   // --- foreground: Synergy aircraft (solid body, from synergy.blend) ---
   if (aircraft){

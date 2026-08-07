@@ -24,8 +24,8 @@
     // grid on the near-white light theme. terrainOp is the base line opacity.
     dark:  { clear:0x05070f, fog:0x05070f, ghost:0xffffff, accent:0xf6e500,
              terrain:0x3f7bff, terrainOp:0.60, scrim:0x05070f, scrimOp:0.22, additive:true },
-    light: { clear:0xe9edf4, fog:0xe4e9f1, ghost:0x2a3555, accent:0x8a6a00,
-             terrain:0x171b24, terrainOp:0.70, scrim:0xffffff, scrimOp:0.10, additive:false }
+    light: { clear:0xeef1f6, fog:0xe8ecf2, ghost:0x2a3555, accent:0x8a6a00,
+             terrain:0x1b2130, terrainOp:0.80, scrim:0xffffff, scrimOp:0.10, additive:false }
   };
 
   var mode = 'dark';
@@ -34,15 +34,12 @@
   var q = (location.search.match(/[?&]theme=(light|dark)/) || [])[1];
   if (q) mode = q;
 
-  // Wireframe-landscape backdrop image per theme (the reference art): blue on
-  // dark, black-on-white on light. The bgColor fills any letterbox seamlessly.
-  var MESH_IMG = { dark: 'assets/terrain-dark.jpg', light: 'assets/terrain-light.jpg' };
-  var MESH_BGC = { dark: '#05070f',                 light: '#f2f4f8' };
+  // Solid theme-coloured sky behind the 3D terrain (terrain is now real WebGL
+  // geometry, not a backdrop image).
+  var MESH_BGC = { dark: '#05070f', light: '#eef1f6' };
   function applyMeshBg() {
     var el = document.querySelector('.mesh-bg');
-    if (!el) return;
-    el.style.backgroundImage = 'url("' + MESH_IMG[mode] + '")';
-    el.style.backgroundColor = MESH_BGC[mode];
+    if (el) el.style.backgroundColor = MESH_BGC[mode];
   }
 
   var renderer = null, scene = null;
@@ -53,7 +50,7 @@
      opt in by tagging themselves with userData.themeRole in scenes.js. */
   function applyScene() {
     var t = tok();
-    if (renderer) renderer.setClearColor(t.clear, 0);   // alpha 0 → transparent canvas; the .mesh-bg image shows through
+    if (renderer) renderer.setClearColor(t.clear, 1);   // opaque theme-coloured sky behind the 3D terrain
     if (scene && scene.fog) scene.fog.color.setHex(t.fog);
     if (!scene) return;
     scene.traverse(function (o) {
