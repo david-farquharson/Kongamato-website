@@ -288,7 +288,7 @@ function frame(now){
   // intro reveal progress (0..1): 1 = settled at rest
   if (revealT < REVEAL_SECS) revealT += dt;
   const rk = easeOutCubic(Math.min(1, revealT / REVEAL_SECS));
-  const revealRot  = (1 - rk) * (Math.PI / 4);   // 45° swing → 0
+  const revealRot  = (1 - rk) * (Math.PI / 8);   // 22.5° swing → 0
   const revealZoom = (1 - rk) * 0.42;            // dolly 42% toward the scene → 0
 
   // camera easing toward target + parallax
