@@ -77,20 +77,21 @@
       //      sky, so it reads like the reference composition ----
       function H(i, j) {
         i = Math.max(0, Math.min(COLS - 1, i)); j = Math.max(0, Math.min(ROWS - 1, j));
-        var idx = j * COLS + i;
+        var idx = j * COLS + i, v = j / (ROWS - 1);   // v: 0 = far/top, 1 = near/bottom
         var h = big[idx] + 0.45 * (lum[idx] - big[idx]);
         h = Math.pow(Math.max(0, h), 1.15);
-        var v = j / (ROWS - 1);                    // 0 = far/top, 1 = near/bottom
-        var env = smoothstep(0.03, 0.20, v)        // fade the far sky band up
+        var env = smoothstep(0.03, 0.20, v)           // fade the far sky band up
                 * (1 - 0.85 * smoothstep(0.72, 1.0, v));  // flatten the near plain
         return h * env;
       }
 
       // ---- clean quad wireframe (to +x and +z neighbours; no diagonals) ----
+      var fz = opts.flipZ, fx = opts.flipX;
       var vx = function (i) { return (i / (COLS - 1) - 0.5) * W; };
       var vz = function (j) { return (j / (ROWS - 1) - 0.5) * D; };
       var pos = [];
-      var push = function (i, j) { pos.push(vx(i), H(i, j) * AMP, vz(j)); };
+      // sample height with optional depth/lateral flip (mountains front↔back, L↔R)
+      var push = function (i, j) { pos.push(vx(i), H(fx ? (COLS - 1 - i) : i, fz ? (ROWS - 1 - j) : j) * AMP, vz(j)); };
       for (var j2 = 0; j2 < ROWS; j2++) for (var i2 = 0; i2 < COLS; i2++) {
         if (i2 < COLS - 1) { push(i2, j2); push(i2 + 1, j2); }
         if (j2 < ROWS - 1) { push(i2, j2); push(i2, j2 + 1); }

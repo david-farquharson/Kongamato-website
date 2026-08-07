@@ -260,9 +260,14 @@ function sceneCessnaTerrain(opts = {}){
   // --- terrain: REAL 3D wireframe heightfield built from the reference image
   //     (js/terrain-mesh.js). Rotatable + theme-recolourable, unlike the flat
   //     jpg it replaces. Sits behind the aircraft; recedes to the fogged horizon.
+  // flipZ = the "reference landscape" framing: mountains pushed to the back so a
+  // grid plain recedes to them (matches the reference art). Blue heightmap for
+  // all (the b/w line-art has no recoverable height); flipX mirrors for variety.
+  const flipZ = opts.flipZ;
   const terrainWrap = new THREE.Group();
-  terrainWrap.position.set(MOUNTAIN_OFFSET_X, -170, -560);
-  const terr = TerrainMesh.build({ src: opts.src, seed: opts.seed, opacityScale: opts.opacityScale, amp: opts.amp || 300 });
+  terrainWrap.position.set(flipZ ? 0 : MOUNTAIN_OFFSET_X, -170, flipZ ? -620 : -560);
+  const terr = TerrainMesh.build({ src: 'assets/terrain-dark.jpg', flipZ: flipZ, flipX: opts.flipX,
+    opacityScale: opts.opacityScale, amp: opts.amp || (flipZ ? 340 : 300) });
   terrainWrap.add(terr);
   g.add(terrainWrap);
   // expose for the intro reveal (zoom + 45° swing → rest) in app.js
@@ -334,35 +339,32 @@ function sceneCessnaTerrain(opts = {}){
   g.userData.hotspots = [[-0.10, 0.12], [0.14, -0.02]];
   return g;
 }
-// Per-page terrain SOURCE image (the reference art), cycling in sequence:
-//   what_we_do → blue, design_studio → 11902, avionics → banner, then repeat.
-// Colour still follows the theme (glow on dark / ink on white). The b/w sources
-// are line-art (no brightness height cue) so they get a larger amp to lift relief.
-const TERRAIN_A = 'assets/terrain-dark.jpg';    // blue reference (11918)
-const TERRAIN_B = 'assets/terrain-light.jpg';   // detailed b/w (11902)
-const TERRAIN_C = 'assets/terrain-light2.jpg';  // banner b/w (8ce2d157)
-function sceneProtect(){ return sceneCessnaTerrain({ aircraft:false, seed:2, src:TERRAIN_B, amp:430 }); }  // design_studio
-function sceneSlider(){  return sceneCessnaTerrain({ hoverBase: 28, seed:1, src:TERRAIN_A }); }            // what_we_do
+// Terrain: the blue heightmap is the only source with real depth data, so it
+// drives all pages. Terrain-only pages use the flipZ "reference landscape"
+// framing (grid plain receding to a mountain range); flipX mirrors for variety.
+// Colour follows the theme (glow on dark / ink-on-white on light).
+function sceneProtect(){ return sceneCessnaTerrain({ aircraft:false, flipZ:true }); }              // design_studio
+function sceneSlider(){  return sceneCessnaTerrain({ hoverBase: 28 }); }                            // what_we_do (aircraft)
 
 /* ==========================================================
    Scene 2 — INSPECT : tank hall + AR tablet overlay (accent)
    ========================================================== */
-function sceneInspect(){  // OPEN SOURCE: back to blue (cycle: same as what_we_do)
-  return sceneCessnaTerrain({ aircraft:false, seed:1, opacityScale:1.15, src:TERRAIN_A });
+function sceneInspect(){  // OPEN SOURCE: reference landscape
+  return sceneCessnaTerrain({ aircraft:false, flipZ:true, opacityScale:1.15 });
 }
 
 /* ==========================================================
    Scene 3 — SIMULATE : training cabin frame + seat (accent)
    ========================================================== */
-function sceneSimulate(){ // TRAINING: 11902 (cycle: same as design_studio)
-  return sceneCessnaTerrain({ hoverBase: 28, seed:2, src:TERRAIN_B, amp:430 });
+function sceneSimulate(){ // TRAINING (aircraft)
+  return sceneCessnaTerrain({ hoverBase: 28 });
 }
 
 /* ==========================================================
    Scene 4 — SCOUT : survey drone over contour terrain (accent)
    ========================================================== */
-function sceneScout(){    // AVIONICS: banner b/w (8ce2d157)
-  return sceneCessnaTerrain({ aircraft:false, seed:3, src:TERRAIN_C, amp:430 });
+function sceneScout(){    // AVIONICS: reference landscape (mirrored for variety)
+  return sceneCessnaTerrain({ aircraft:false, flipZ:true, flipX:true });
 }
 
 /* ==========================================================
@@ -406,21 +408,21 @@ const SCENES = [
     body:'Runs offline from a single HTML file. No libraries, no build step, no network, open it and it works. Aircraft Design Studio is a browser-based conceptual-design workbench for aircraft and drones, with nine linked analysis tabs covering the sizing calculations aerospace engineers actually use: constraint diagrams, drag polars, V-n envelopes, weight and CG build-up, and stability derivatives. Every tab shares one design state, so changing gross weight propagates through the geometry, performance, and structural envelope at once. The ninth tab is a live Lattice-Boltzmann CFD wind tunnel; upload any STL or OBJ and it voxelizes the mesh onto a D3Q19 lattice, solves transient viscous flow on the GPU, and returns lift and drag by momentum exchange alongside a full ISA atmosphere solution.',
     copyPos:{ right:'200px', bottom:'150px', maxWidth:'500px' },   // <-- this scene's text position
     // cuePos:{ left:'900px', top:'-100px' },                          
-    cam:[10, 60, 350], look:[6, 14, 0], build:sceneProtect
+    cam:[0, 40, 330], look:[0, 6, -500], build:sceneProtect
   },
     {
     id:'avionics', label:'avionics', title:'Avionics',
     body:'Kongamato is building an open-source, full-stack avionics platform for experimental aviation: a glass cockpit, an AR smart-glasses HUD, and an autopilot commanded by plain voice or text. The target capability set includes auto takeoff and landing, nearest-airport diversion, wind-aware pattern work, and traffic and obstacle awareness; supervised from the panel or the HUD, and overridable by the Pilot in Command at all times.',
     copyPos:{ left:'300px', bottom:'300px' },   // <-- this scene's text position
     // cuePos:{ top:'-100px' },                    // <-- this scene's \"scroll to discover\" position
-    cam:[-26, 64, 380], look:[10, 12, 0], build:sceneScout
+    cam:[8, 44, 340], look:[0, 8, -520], build:sceneScout
   },
   {
     id:'open_source', label:'open_source', title:'Open Source',
     body:'Everything Kongamato builds is released under Apache 2.0: the tools, the avionics, the airframe data. Below is the current state of the code, what we have validated it against, and where it breaks. We publish the limits alongside the capabilities because avionics that hold lives should be auditable by anyone who wants to check the work.  This page is a living document. It reflects what exists today, not what we intend to build.',
     copyPos:{ left:'300px', bottom:'300px' , maxWidth:'530px' },   // <-- this scene's text position
     cuePos:{ right:'100px', bottom:'200px' },                    // <-- this scene's \"scroll to discover\" position
-    cam:[-14, 34, 205], look:[8, 4, 0], build:sceneInspect
+    cam:[-6, 38, 320], look:[0, 6, -500], build:sceneInspect
   },
   {
     id:'training', label:'training', title:'Training and STEM',
