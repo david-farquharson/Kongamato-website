@@ -236,7 +236,8 @@ function buildProceduralTerrain(opts = {}){
   const low  = (window.PERF && PERF.lowEnd);
   const NX = low ? 128 : 200;             // grid columns
   const NZ = low ?  92 : 144;             // grid rows (depth)
-  const W = 2600, D = 1800, AMP = 320;    // world extent (x, z) + peak height
+  const W = 2800, D = 1500, AMP = 240;    // world extent (x, z) + peak height
+  const mx = 0.28 + 0.44 * _hash(seed * 3 + 5, 11, seed);   // peak x-position (varies per page)
 
   // z grows with v: v=1 is the near/foreground edge, v=0 the far horizon.
   const cols = NX + 1, rows = NZ + 1, n = cols * rows;
@@ -244,11 +245,14 @@ function buildProceduralTerrain(opts = {}){
   for (let j = 0; j < rows; j++){
     for (let i = 0; i < cols; i++){
       const u = i / NX, v = j / NZ;
-      let h = _fbm(u * 4.4 + 3.1, v * 4.4 + 1.7, seed);
-      h = Math.pow(h, 1.15);                        // gentle ridges
-      // Flat grid plain in the immediate foreground that ramps up into the
-      // mountain range behind it (matches the reference wireframe landscape).
-      const plain = _smooth(Math.min(1, (1 - v) / 0.28));   // 0 at near edge → 1 by ~28% back
+      // one dominant massif (a prominent peak in the mid-field) + fbm detail —
+      // a real mountain with sky around it, like the reference art.
+      const massif = Math.exp(-(Math.pow((u - mx) / 0.24, 2) + Math.pow((v - 0.48) / 0.32, 2)));
+      let h = _fbm(u * 3.1 + 3.1, v * 3.3 + 1.7, seed) * 0.55 + massif * 0.85;
+      h = Math.pow(Math.max(0, h), 1.2);
+      // Only a SHORT flat plain in the immediate foreground (near edge), then
+      // the mountain rises and fills the view.
+      const plain = _smooth(Math.min(1, (1 - v) / 0.14));   // flat only for the nearest ~14%
       const k = j * cols + i;
       X[k] = (u - 0.5) * W; Z[k] = (v - 0.5) * D; Y[k] = h * plain * AMP;
     }
@@ -271,8 +275,9 @@ function buildProceduralTerrain(opts = {}){
   const wrap = new THREE.Group();
   wrap.add(lines);
   // rest on the floor; near edge sits behind the aircraft (z<90) so the plane
-  // always occludes it, and the range recedes to the fogged horizon.
-  wrap.position.set(MOUNTAIN_OFFSET_X, -46, -820);
+  // always occludes it, and the mountain mass sits in the mid-field where the
+  // camera looks (so the whole range is framed, not just foreground grid).
+  wrap.position.set(MOUNTAIN_OFFSET_X, -46, -690);
   return wrap;
 }
 
