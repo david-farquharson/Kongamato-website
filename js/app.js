@@ -56,6 +56,21 @@ const bodyEl   = copyEl.querySelector('p');
 const hotLayer = document.getElementById('hotspots');
 const osOverlay = document.getElementById('osscroll');
 
+/* 3s intro reveal (zoom-in + 45° swing → resting view), replayed on each scene.
+   Applied to the backdrop AND canvas so terrain + aircraft move together.
+   Skipped with ?nointro (screenshots/tests). */
+const meshBgEl = document.querySelector('.mesh-bg');
+const noIntro = /[?&]nointro/.test(location.search);
+function playSceneReveal(){
+  if (noIntro) return;
+  [stage, meshBgEl].forEach(el => {
+    if (!el) return;
+    el.classList.remove('scene-reveal');
+    void el.offsetWidth;            // force reflow so the animation restarts
+    el.classList.add('scene-reveal');
+  });
+}
+
 /* open_source scene: toggle the scrollable long-form overlay */
 function setOSOverlay(id){
   const isOS = id === 'open_source';
@@ -176,6 +191,7 @@ function go(n, dir = 1){
     from.visible = false;
     to.visible = true;
     if (to.userData.lazyLoad) to.userData.lazyLoad();   // fetch/decode models on first visit
+    playSceneReveal();                      // replay the zoom/rotate reveal for this scene
     to.rotation.y = dir * 0.5;              // enter offset, eased back to 0
     to.position.y = -dir * 26;
 
@@ -360,6 +376,7 @@ function boot(){
   updateNav();
   setTimeout(() => copyEl.classList.add('in'), 900);
 
+  playSceneReveal();              // intro reveal on first load
   requestAnimationFrame(frame);   // rAF supplies the timestamp the fps gate needs
 }
 boot();

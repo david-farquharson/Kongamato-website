@@ -80,4 +80,8 @@ function frame(now){
 
   renderer.render(scene, camera);
 }
+// intro reveal (zoom-in + 45° swing → resting view) on load, unless ?nointro
+if (!/[?&]nointro/.test(location.search)) {
+  [stage, document.querySelector('.mesh-bg')].forEach(el => el && el.classList.add('scene-reveal'));
+}
 requestAnimationFrame(frame);   // rAF supplies the timestamp the fps gate needs
