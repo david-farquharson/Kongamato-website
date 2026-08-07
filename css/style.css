@@ -22,8 +22,8 @@ html[data-theme="light"]{
   --bg:#eaeef4;
   --bg-deep:#dde3ec;
   --accent:#8a6a00;               /* deeper gold, legible on white */
-  --white:#0e1424;                /* "ink" — primary text          */
-  --dim:#4c5666;
+  --white:#0b0e14;                /* "ink" — primary text (near-black) */
+  --dim:#111621;                  /* body text: black, not gray        */
   --line:rgba(14,22,40,.18);
   --overlay:rgba(234,238,244,.80);
   --menu-bg:rgba(234,238,244,.95);
