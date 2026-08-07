@@ -38,49 +38,12 @@ function mesh(geo, color, opacity){
    Environment: perspective grid floor + animated horizon waves
    ========================================================== */
 function buildEnvironment(){
+  // The wireframe landscape is now a CSS backdrop image (.mesh-bg, the reference
+  // art), not 3D geometry — so the environment is empty. The WebGL canvas is
+  // transparent and renders only the aircraft over that backdrop. (Old scrim /
+  // grid / wave-ribbon code removed; see git history to restore.)
   const g = new THREE.Group();
-
-  // floor grid — removed: its perspective lines were covering the aircraft
-  // const grid = new THREE.GridHelper(900, 110, 0x2a3348, 0x161d2e);
-  // grid.position.y = -46;
-  // grid.material.transparent = true;
-  // grid.material.opacity = .55;
-  // g.add(grid);
-
-  // LAYER 3 — dark shade (scrim). Sits between the aircraft (front) and the
-  // terrain (back). depthTest:true so the opaque aircraft occludes it (aircraft
-  // stays in front); renderOrder puts it above terrain + ribbons.
-  const _st = window.THEME ? window.THEME.tok() : null;
-  const scrim = new THREE.Mesh(
-    new THREE.PlaneGeometry(4000, 2500),
-    new THREE.MeshBasicMaterial({ color:_st ? _st.scrim : 0x05070f, transparent:true,
-      opacity:_st ? _st.scrimOp : .70, depthWrite:false, depthTest:true })
-  );
-  scrim.material.userData.themeRole = 'scrim';
-  scrim.position.set(0, 0, 100);
-  scrim.renderOrder = -10;
-  g.add(scrim);
-
-  // NOTE: the faint ceiling grid and the horizon "wave ribbons" used to live
-  // here. Both are wide, flat, regularly-divided planes seen almost edge-on,
-  // so in perspective their parallel lines collapse into a hard "starburst"
-  // converging on the vanishing point — the empty fan of lines that read as an
-  // eyesore (especially in light mode). Removed for a cleaner horizon; the
-  // decimated terrain already carries the depth. Kept commented for easy revert.
-  //
-  //   const top = new THREE.GridHelper(900, 60, 0x1b2236, 0x11172a);
-  //   top.position.y = 150; top.material.transparent = true; top.material.opacity = .18;
-  //   g.add(top);
-  //
-  //   for (let i = 0; i < 5; i++){
-  //     const geo = new THREE.PlaneGeometry(1100, 60, 160, 6);
-  //     const m = new THREE.LineSegments(new THREE.WireframeGeometry(geo), wire(GHOST, .07 + i*0.025));
-  //     m.rotation.x = -Math.PI/2 + 0.16;
-  //     m.position.set(0, 6 + i*7 - 45, -120 - i*55);
-  //     m.userData.seed = i*1.7; m.renderOrder = -30; g.add(m); waves.push(m);
-  //   }
-
-  g.userData.waves = [];   // no ribbons to animate → animateEnvironment no-ops
+  g.userData.waves = [];   // animateEnvironment no-ops
   return g;
 }
 
@@ -294,8 +257,7 @@ function sceneCessnaTerrain(opts = {}){
   g.userData.lazyLoad = function(){
     if (loaded) return; loaded = true;
 
-  // --- procedural grid terrain (generated in code — no download/decode) ---
-  g.add(buildProceduralTerrain({ seed: opts.seed, opacityScale: opts.opacityScale }));
+  // Terrain is the CSS .mesh-bg backdrop (reference image) — no 3D terrain here.
 
   // --- foreground: Synergy aircraft (solid body, from synergy.blend) ---
   if (aircraft){

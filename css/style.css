@@ -43,7 +43,17 @@ body{
 a{color:inherit;text-decoration:none}
 canvas{display:block}
 
-/* ---------- WebGL stage ---------- */
+/* ---------- Wireframe-landscape backdrop (reference image) ---------- */
+/* contain = the WHOLE image is always visible (full length + width, no crop);
+   background-color fills any letterbox and is matched to the image edge per
+   theme via js/theme.js. Image + colour are set by THEME. */
+.mesh-bg{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-repeat:no-repeat;background-position:center center;background-size:contain;
+  transition:opacity .6s ease;
+}
+
+/* ---------- WebGL stage (transparent overlay for the aircraft) ---------- */
 #stage{position:fixed;inset:0;z-index:1}
 #stage canvas{width:100%;height:100%}
 

@@ -34,6 +34,17 @@
   var q = (location.search.match(/[?&]theme=(light|dark)/) || [])[1];
   if (q) mode = q;
 
+  // Wireframe-landscape backdrop image per theme (the reference art): blue on
+  // dark, black-on-white on light. The bgColor fills any letterbox seamlessly.
+  var MESH_IMG = { dark: 'assets/terrain-dark.jpg', light: 'assets/terrain-light.jpg' };
+  var MESH_BGC = { dark: '#05070f',                 light: '#f2f4f8' };
+  function applyMeshBg() {
+    var el = document.querySelector('.mesh-bg');
+    if (!el) return;
+    el.style.backgroundImage = 'url("' + MESH_IMG[mode] + '")';
+    el.style.backgroundColor = MESH_BGC[mode];
+  }
+
   var renderer = null, scene = null;
   function tok() { return TOK[mode]; }
   function blend() { return tok().additive ? THREE.AdditiveBlending : THREE.NormalBlending; }
@@ -42,7 +53,7 @@
      opt in by tagging themselves with userData.themeRole in scenes.js. */
   function applyScene() {
     var t = tok();
-    if (renderer) renderer.setClearColor(t.clear, 1);
+    if (renderer) renderer.setClearColor(t.clear, 0);   // alpha 0 → transparent canvas; the .mesh-bg image shows through
     if (scene && scene.fog) scene.fog.color.setHex(t.fog);
     if (!scene) return;
     scene.traverse(function (o) {
@@ -63,6 +74,7 @@
 
   function applyDOM() {
     document.documentElement.setAttribute('data-theme', mode);
+    applyMeshBg();
     var toggles = document.querySelectorAll('.theme-toggle');
     for (var i = 0; i < toggles.length; i++) {
       toggles[i].setAttribute('aria-pressed', mode === 'light' ? 'true' : 'false');
