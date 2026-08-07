@@ -262,7 +262,7 @@ function sceneCessnaTerrain(opts = {}){
   //     jpg it replaces. Sits behind the aircraft; recedes to the fogged horizon.
   const terrainWrap = new THREE.Group();
   terrainWrap.position.set(MOUNTAIN_OFFSET_X, -170, -560);
-  const terr = TerrainMesh.build({ seed: opts.seed, opacityScale: opts.opacityScale, amp: 300 });
+  const terr = TerrainMesh.build({ src: opts.src, seed: opts.seed, opacityScale: opts.opacityScale, amp: opts.amp || 300 });
   terrainWrap.add(terr);
   g.add(terrainWrap);
   // expose for the intro reveal (zoom + 45° swing → rest) in app.js
@@ -334,30 +334,35 @@ function sceneCessnaTerrain(opts = {}){
   g.userData.hotspots = [[-0.10, 0.12], [0.14, -0.02]];
   return g;
 }
-// Per-page terrain shape via seed; seeds cycle 1→2→3 across the pages, colour
-// follows the theme (glow on dark / ink on white).
-function sceneProtect(){ return sceneCessnaTerrain({ aircraft:false, seed:2 }); }   // design_studio
-function sceneSlider(){  return sceneCessnaTerrain({ hoverBase: 28, seed:1 }); }    // what_we_do
+// Per-page terrain SOURCE image (the reference art), cycling in sequence:
+//   what_we_do → blue, design_studio → 11902, avionics → banner, then repeat.
+// Colour still follows the theme (glow on dark / ink on white). The b/w sources
+// are line-art (no brightness height cue) so they get a larger amp to lift relief.
+const TERRAIN_A = 'assets/terrain-dark.jpg';    // blue reference (11918)
+const TERRAIN_B = 'assets/terrain-light.jpg';   // detailed b/w (11902)
+const TERRAIN_C = 'assets/terrain-light2.jpg';  // banner b/w (8ce2d157)
+function sceneProtect(){ return sceneCessnaTerrain({ aircraft:false, seed:2, src:TERRAIN_B, amp:430 }); }  // design_studio
+function sceneSlider(){  return sceneCessnaTerrain({ hoverBase: 28, seed:1, src:TERRAIN_A }); }            // what_we_do
 
 /* ==========================================================
    Scene 2 — INSPECT : tank hall + AR tablet overlay (accent)
    ========================================================== */
-function sceneInspect(){  // OPEN SOURCE: terrain only, a touch brighter
-  return sceneCessnaTerrain({ aircraft:false, seed:1, opacityScale:1.15 });
+function sceneInspect(){  // OPEN SOURCE: back to blue (cycle: same as what_we_do)
+  return sceneCessnaTerrain({ aircraft:false, seed:1, opacityScale:1.15, src:TERRAIN_A });
 }
 
 /* ==========================================================
    Scene 3 — SIMULATE : training cabin frame + seat (accent)
    ========================================================== */
-function sceneSimulate(){ // TRAINING: aircraft over terrain
-  return sceneCessnaTerrain({ hoverBase: 28, seed:2 });
+function sceneSimulate(){ // TRAINING: 11902 (cycle: same as design_studio)
+  return sceneCessnaTerrain({ hoverBase: 28, seed:2, src:TERRAIN_B, amp:430 });
 }
 
 /* ==========================================================
    Scene 4 — SCOUT : survey drone over contour terrain (accent)
    ========================================================== */
-function sceneScout(){    // AVIONICS: terrain only
-  return sceneCessnaTerrain({ aircraft:false, seed:3 });
+function sceneScout(){    // AVIONICS: banner b/w (8ce2d157)
+  return sceneCessnaTerrain({ aircraft:false, seed:3, src:TERRAIN_C, amp:430 });
 }
 
 /* ==========================================================

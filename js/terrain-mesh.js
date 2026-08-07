@@ -53,20 +53,24 @@
     var W = opts.width || 2000, D = opts.depth || 1150;
     var seedShift = (opts.seed || 0) * 0.11;
 
+    var src = opts.src || HEIGHTMAP;
+    // Bright-on-dark art (the blue ref): brightness = elevation. Black-on-white
+    // art: invert so dense dark grid (mountains) reads as high ground.
+    var invert = opts.invert != null ? opts.invert : /light/.test(src);
+
     var img = new Image();
     img.onload = function () {
       // ---- sample luminance onto a COLS×ROWS grid ----
       var cv = document.createElement('canvas'); cv.width = COLS; cv.height = ROWS;
       var ctx = cv.getContext('2d', { willReadFrequently: true });
-      // horizontal offset (seed) so pages differ slightly; wrap by shifting draw
-      var ox = Math.round(seedShift * COLS);
       ctx.drawImage(img, 0, 0, COLS, ROWS);
       var data = ctx.getImageData(0, 0, COLS, ROWS).data;
       var lum = new Float32Array(COLS * ROWS);
       for (var k = 0; k < COLS * ROWS; k++) {
-        lum[k] = (data[k * 4] * 0.33 + data[k * 4 + 1] * 0.5 + data[k * 4 + 2] * 0.17) / 255;
+        var l = (data[k * 4] * 0.33 + data[k * 4 + 1] * 0.5 + data[k * 4 + 2] * 0.17) / 255;
+        lum[k] = invert ? (1 - l) : l;
       }
-      var big = blur(lum, COLS, ROWS, 4);          // big smooth mountain forms
+      var big = blur(lum, COLS, ROWS, invert ? 3 : 4);   // big smooth mountain forms
 
       // ---- height field: big forms + a little fine detail, with a depth
       //      envelope that flattens the near foreground (plain) and the far
