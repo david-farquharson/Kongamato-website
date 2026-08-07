@@ -189,10 +189,94 @@ function wireframeify(root, color, opacity){
   });
 }
 
+/* ==========================================================
+   Procedural grid-wireframe terrain — replaces the old .glb mountain mesh.
+   A subdivided ground plane displaced by fractal value-noise, drawn as a clean
+   QUAD grid (horizontal + vertical lines, no diagonals) — the look of the
+   reference wireframe-landscape art. Generated entirely in code: no download
+   (faster load, esp. on Windows PCs), no decimation, no sparse triangles.
+   Density scales to the GPU tier; colour + blending follow the theme
+   (glowing blue on dark, ink on white) via the 'terrain' material role.
+   ========================================================== */
+function _fract(x){ return x - Math.floor(x); }
+function _hash(ix, iz, seed){
+  return _fract(Math.sin(ix * 127.1 + iz * 311.7 + seed * 57.31) * 43758.5453);
+}
+function _smooth(t){ return t * t * (3 - 2 * t); }
+function _vnoise(x, z, seed){
+  const ix = Math.floor(x), iz = Math.floor(z), fx = x - ix, fz = z - iz;
+  const a = _hash(ix, iz, seed),     b = _hash(ix + 1, iz, seed);
+  const c = _hash(ix, iz + 1, seed), d = _hash(ix + 1, iz + 1, seed);
+  const u = _smooth(fx), v = _smooth(fz);
+  return (a * (1 - u) + b * u) * (1 - v) + (c * (1 - u) + d * u) * v;
+}
+function _fbm(x, z, seed){
+  let sum = 0, amp = 0.5, freq = 1;
+  for (let o = 0; o < 5; o++){ sum += amp * _vnoise(x * freq, z * freq, seed + o * 19.3); freq *= 2; amp *= 0.5; }
+  return sum;
+}
+
+/* Theme-aware line material for the terrain grid. opacityScale lets a scene run
+   a touch brighter/dimmer; THEME re-derives opacity on toggle from it. */
+function terrainMaterial(opacityScale){
+  const T = window.THEME, t = T ? T.tok() : null;
+  const m = new THREE.LineBasicMaterial({
+    color:       t ? t.terrain    : 0x3f7bff,
+    opacity:    (t ? t.terrainOp  : 0.55) * (opacityScale ?? 1),
+    transparent: true, depthWrite: false,
+    blending: (!T || T.additive()) ? THREE.AdditiveBlending : THREE.NormalBlending
+  });
+  m.userData.themeRole    = 'terrain';
+  m.userData.opacityScale = opacityScale ?? 1;
+  return m;
+}
+
+function buildProceduralTerrain(opts = {}){
+  const seed = opts.seed ?? 1;
+  const low  = (window.PERF && PERF.lowEnd);
+  const NX = low ? 116 : 182;             // grid columns
+  const NZ = low ?  82 : 130;             // grid rows (depth)
+  const W = 2000, D = 1600, AMP = 230;    // world extent (x, z) + peak height
+
+  const cols = NX + 1, rows = NZ + 1, n = cols * rows;
+  const X = new Float32Array(n), Y = new Float32Array(n), Z = new Float32Array(n);
+  for (let j = 0; j < rows; j++){
+    for (let i = 0; i < cols; i++){
+      const u = i / NX, v = j / NZ;                 // v=0 near (front), v=1 far (horizon)
+      let h = _fbm(u * 5.0 + 3.1, v * 4.2 + 1.7, seed);
+      h = Math.pow(h, 1.35);                        // sharpen ridges
+      // envelope: flat plain in the near-centre, rising to ridges at back + sides
+      const side = Math.pow(Math.abs(u - 0.5) * 2, 2.2);   // 0 centre → 1 edges
+      const back = _smooth(Math.min(1, v * 1.15));         // 0 near → 1 far
+      const env  = Math.min(1.25, back * 0.85 + side * 0.75);
+      const k = j * cols + i;
+      X[k] = (u - 0.5) * W; Z[k] = (v - 0.5) * D; Y[k] = h * env * AMP;
+    }
+  }
+
+  // clean quad grid: connect each vertex to its +x and +z neighbour (no diagonals)
+  const pos = [];
+  const put = (i, j) => { const k = j * cols + i; pos.push(X[k], Y[k], Z[k]); };
+  for (let j = 0; j < rows; j++){
+    for (let i = 0; i < cols; i++){
+      if (i < cols - 1){ put(i, j); put(i + 1, j); }
+      if (j < rows - 1){ put(i, j); put(i, j + 1); }
+    }
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3));
+
+  const lines = new THREE.LineSegments(geo, terrainMaterial(opts.opacityScale));
+  lines.renderOrder = -20;                 // behind the scrim + aircraft
+  const wrap = new THREE.Group();
+  wrap.add(lines);
+  wrap.position.set(MOUNTAIN_OFFSET_X, -46, -600);   // rest on the floor, recede to horizon
+  return wrap;
+}
+
 function sceneCessnaTerrain(opts = {}){
   const hoverBase  = opts.hoverBase ?? 26;
   const aircraft   = opts.aircraft ?? true;        // show the Synergy aircraft?
-  const terrainRot = opts.terrainRot ?? 0;         // degrees to spin the terrain to (animated)
   const floorRings = opts.floorRings ?? false;     // gold contour rings on the floor?
   const g = new THREE.Group();
 
@@ -203,30 +287,8 @@ function sceneCessnaTerrain(opts = {}){
   g.userData.lazyLoad = function(){
     if (loaded) return; loaded = true;
 
-  // --- mountains: rugged landscape gltf — full stage width, bottom 2/3,
-  //     tilted down ~10% ---
-  loadGLTF(GLTF_ASSETS.mountains).then(src => {
-    const m = src.clone(true);
-    wireframeify(m, 0x4D4D4D, opts.terrainOpacity ?? .35);   // mountains in 30% gray (per-scene overridable)
-    // LAYER 4 — terrain mesh: keep depthTest ON so the nearer aircraft occludes
-    // it (aircraft renders in front). renderOrder puts it behind the shade.
-    m.traverse(o => { if (o.isLineSegments || o.isMesh){ o.renderOrder = -20; } });
-    // normalize: scale so model width spans the full stage
-    let box = new THREE.Box3().setFromObject(m);
-    const size = box.getSize(new THREE.Vector3());
-    m.scale.setScalar(1000 / size.x);
-    // recentre, then rest the base on the floor plane (y = -46)
-    box.setFromObject(m);
-    const c = box.getCenter(new THREE.Vector3());
-    m.position.sub(c);
-    const wrap = new THREE.Group();
-    wrap.add(m);
-    wrap.position.set(MOUNTAIN_OFFSET_X, -46 + (size.y * (1000 / size.x)) / 2, -80);  // pushed back behind the aircraft
-    wrap.rotation.x = THREE.MathUtils.degToRad(0);  // tilt down 10%
-    g.add(wrap);
-    // animated rotation of the terrain around its centre axis (see app.js frame loop)
-    if (terrainRot) g.userData.terrainSpin = { obj: wrap, target: THREE.MathUtils.degToRad(terrainRot) };
-  });
+  // --- procedural grid terrain (generated in code — no download/decode) ---
+  g.add(buildProceduralTerrain({ seed: opts.seed, opacityScale: opts.opacityScale }));
 
   // --- foreground: Synergy aircraft (solid body, from synergy.blend) ---
   if (aircraft){
@@ -290,28 +352,30 @@ function sceneCessnaTerrain(opts = {}){
   g.userData.hotspots = [[-0.10, 0.12], [0.14, -0.02]];
   return g;
 }
-function sceneProtect(){ return sceneCessnaTerrain({ aircraft:false }); }  // terrain only
-function sceneSlider(){  return sceneCessnaTerrain({ hoverBase: 28 }); }  // vertically centred
+// Per-page terrain shape via seed; seeds cycle 1→2→3 across the pages, colour
+// follows the theme (glow on dark / ink on white).
+function sceneProtect(){ return sceneCessnaTerrain({ aircraft:false, seed:2 }); }   // design_studio
+function sceneSlider(){  return sceneCessnaTerrain({ hoverBase: 28, seed:1 }); }    // what_we_do
 
 /* ==========================================================
    Scene 2 — INSPECT : tank hall + AR tablet overlay (accent)
    ========================================================== */
-function sceneInspect(){  // OPEN SOURCE: terrain only, rotated 150°, terrain 50% brighter
-  return sceneCessnaTerrain({ aircraft:false, terrainRot:150, terrainOpacity:.53 });
+function sceneInspect(){  // OPEN SOURCE: terrain only, a touch brighter
+  return sceneCessnaTerrain({ aircraft:false, seed:1, opacityScale:1.15 });
 }
 
 /* ==========================================================
    Scene 3 — SIMULATE : training cabin frame + seat (accent)
    ========================================================== */
-function sceneSimulate(){ // TRAINING: aircraft (same position/scale/orientation as it was on Protect), terrain rotated 90°
-  return sceneCessnaTerrain({ hoverBase: 28, terrainRot:90 });
+function sceneSimulate(){ // TRAINING: aircraft over terrain
+  return sceneCessnaTerrain({ hoverBase: 28, seed:2 });
 }
 
 /* ==========================================================
    Scene 4 — SCOUT : survey drone over contour terrain (accent)
    ========================================================== */
-function sceneScout(){    // INVESTIGATE: terrain only, rotated 90+90=180°
-  return sceneCessnaTerrain({ aircraft:false, terrainRot:180 });   // gold floor rings removed
+function sceneScout(){    // AVIONICS: terrain only
+  return sceneCessnaTerrain({ aircraft:false, seed:3 });
 }
 
 /* ==========================================================

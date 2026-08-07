@@ -20,10 +20,12 @@
   // Scene colour tokens per theme. `additive:true` reproduces the original
   // glow; light mode uses normal blending so dark lines read on a light sky.
   var TOK = {
+    // terrain: glowing blue grid on dark (like the neon reference), dark "ink"
+    // grid on the near-white light theme. terrainOp is the base line opacity.
     dark:  { clear:0x05070f, fog:0x05070f, ghost:0xffffff, accent:0xf6e500,
-             terrain:0x4d4d4d, scrim:0x05070f, scrimOp:0.70, additive:true },
+             terrain:0x3f7bff, terrainOp:0.55, scrim:0x05070f, scrimOp:0.42, additive:true },
     light: { clear:0xe9edf4, fog:0xe4e9f1, ghost:0x2a3555, accent:0x8a6a00,
-             terrain:0x5b6273, scrim:0xffffff, scrimOp:0.28, additive:false }
+             terrain:0x171b24, terrainOp:0.70, scrim:0xffffff, scrimOp:0.15, additive:false }
   };
 
   var mode = 'dark';
@@ -48,7 +50,8 @@
         if (!role) continue;
         if (role === 'ghost')        { m.color.setHex(t.ghost);   m.blending = blend(); }
         else if (role === 'accent')  { m.color.setHex(t.accent);  m.blending = blend(); }
-        else if (role === 'terrain') { m.color.setHex(t.terrain); m.blending = blend(); }
+        else if (role === 'terrain') { m.color.setHex(t.terrain); m.blending = blend();
+                                       m.opacity = t.terrainOp * (m.userData.opacityScale || 1); }
         else if (role === 'scrim')   { m.color.setHex(t.scrim);   m.opacity  = t.scrimOp; }
         m.needsUpdate = true;
       }
