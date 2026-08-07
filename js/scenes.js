@@ -406,14 +406,14 @@ const SCENES = [
     body:'Runs offline from a single HTML file. No libraries, no build step, no network, open it and it works. Aircraft Design Studio is a browser-based conceptual-design workbench for aircraft and drones, with nine linked analysis tabs covering the sizing calculations aerospace engineers actually use: constraint diagrams, drag polars, V-n envelopes, weight and CG build-up, and stability derivatives. Every tab shares one design state, so changing gross weight propagates through the geometry, performance, and structural envelope at once. The ninth tab is a live Lattice-Boltzmann CFD wind tunnel; upload any STL or OBJ and it voxelizes the mesh onto a D3Q19 lattice, solves transient viscous flow on the GPU, and returns lift and drag by momentum exchange alongside a full ISA atmosphere solution.',
     copyPos:{ right:'200px', bottom:'150px', maxWidth:'500px' },   // <-- this scene's text position
     // cuePos:{ left:'900px', top:'-100px' },                          
-    cam:[10, 46, 165], look:[6, 8, 0], build:sceneProtect
+    cam:[10, 60, 350], look:[6, 14, 0], build:sceneProtect
   },
     {
     id:'avionics', label:'avionics', title:'Avionics',
     body:'Kongamato is building an open-source, full-stack avionics platform for experimental aviation: a glass cockpit, an AR smart-glasses HUD, and an autopilot commanded by plain voice or text. The target capability set includes auto takeoff and landing, nearest-airport diversion, wind-aware pattern work, and traffic and obstacle awareness; supervised from the panel or the HUD, and overridable by the Pilot in Command at all times.',
     copyPos:{ left:'300px', bottom:'300px' },   // <-- this scene's text position
     // cuePos:{ top:'-100px' },                    // <-- this scene's \"scroll to discover\" position
-    cam:[-26, 52, 210], look:[10, 6, 0], build:sceneScout
+    cam:[-26, 64, 380], look:[10, 12, 0], build:sceneScout
   },
   {
     id:'open_source', label:'open_source', title:'Open Source',
