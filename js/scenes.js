@@ -234,23 +234,23 @@ function terrainMaterial(opacityScale){
 function buildProceduralTerrain(opts = {}){
   const seed = opts.seed ?? 1;
   const low  = (window.PERF && PERF.lowEnd);
-  const NX = low ? 116 : 182;             // grid columns
-  const NZ = low ?  82 : 130;             // grid rows (depth)
-  const W = 2000, D = 1600, AMP = 230;    // world extent (x, z) + peak height
+  const NX = low ? 128 : 200;             // grid columns
+  const NZ = low ?  92 : 144;             // grid rows (depth)
+  const W = 2600, D = 1800, AMP = 320;    // world extent (x, z) + peak height
 
+  // z grows with v: v=1 is the near/foreground edge, v=0 the far horizon.
   const cols = NX + 1, rows = NZ + 1, n = cols * rows;
   const X = new Float32Array(n), Y = new Float32Array(n), Z = new Float32Array(n);
   for (let j = 0; j < rows; j++){
     for (let i = 0; i < cols; i++){
-      const u = i / NX, v = j / NZ;                 // v=0 near (front), v=1 far (horizon)
-      let h = _fbm(u * 5.0 + 3.1, v * 4.2 + 1.7, seed);
-      h = Math.pow(h, 1.35);                        // sharpen ridges
-      // envelope: flat plain in the near-centre, rising to ridges at back + sides
-      const side = Math.pow(Math.abs(u - 0.5) * 2, 2.2);   // 0 centre → 1 edges
-      const back = _smooth(Math.min(1, v * 1.15));         // 0 near → 1 far
-      const env  = Math.min(1.25, back * 0.85 + side * 0.75);
+      const u = i / NX, v = j / NZ;
+      let h = _fbm(u * 4.4 + 3.1, v * 4.4 + 1.7, seed);
+      h = Math.pow(h, 1.15);                        // gentle ridges
+      // Flat grid plain in the immediate foreground that ramps up into the
+      // mountain range behind it (matches the reference wireframe landscape).
+      const plain = _smooth(Math.min(1, (1 - v) / 0.28));   // 0 at near edge → 1 by ~28% back
       const k = j * cols + i;
-      X[k] = (u - 0.5) * W; Z[k] = (v - 0.5) * D; Y[k] = h * env * AMP;
+      X[k] = (u - 0.5) * W; Z[k] = (v - 0.5) * D; Y[k] = h * plain * AMP;
     }
   }
 
@@ -270,7 +270,9 @@ function buildProceduralTerrain(opts = {}){
   lines.renderOrder = -20;                 // behind the scrim + aircraft
   const wrap = new THREE.Group();
   wrap.add(lines);
-  wrap.position.set(MOUNTAIN_OFFSET_X, -46, -600);   // rest on the floor, recede to horizon
+  // rest on the floor; near edge sits behind the aircraft (z<90) so the plane
+  // always occludes it, and the range recedes to the fogged horizon.
+  wrap.position.set(MOUNTAIN_OFFSET_X, -46, -820);
   return wrap;
 }
 
@@ -313,8 +315,12 @@ function sceneCessnaTerrain(opts = {}){
     jet.rotation.order = 'YXZ';
     jet.rotation.y = THREE.MathUtils.degToRad(250);
     jet.rotation.x = THREE.MathUtils.degToRad(-10);
-    // LAYER 2 (front) — aircraft: draws in front of the dark shade.
-    jet.traverse(o => { if (o.isMesh){ o.renderOrder = 10; } });
+    // LAYER 2 (front) — aircraft draws in front of and OCCLUDES the terrain grid:
+    // force depth write/test so the transparent wireframe behind it is hidden.
+    jet.traverse(o => { if (o.isMesh){
+      o.renderOrder = 10;
+      if (o.material){ o.material.depthWrite = true; o.material.depthTest = true; o.material.transparent = false; }
+    } });
     plane.add(jet);
   });
   }

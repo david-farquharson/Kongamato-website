@@ -12,7 +12,7 @@ renderer.setClearColor(0x05070f, 1);
 stage.appendChild(renderer.domElement);
 
 const scene = new THREE.Scene();
-scene.fog = new THREE.Fog(0x05070f, 260, 760);
+scene.fog = new THREE.Fog(0x05070f, 240, 1600);
 
 const camera = new THREE.PerspectiveCamera(48, innerWidth / innerHeight, 1, 2000);
 

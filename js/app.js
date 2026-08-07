@@ -17,7 +17,7 @@ renderer.setClearColor(0x05070f, 1);
 stage.appendChild(renderer.domElement);
 
 const scene = new THREE.Scene();
-scene.fog = new THREE.Fog(0x05070f, 260, 760);
+scene.fog = new THREE.Fog(0x05070f, 240, 1600);   // soft, far — lets the mountain range recede without fogging out
 
 const camera = new THREE.PerspectiveCamera(48, innerWidth / innerHeight, 1, 2000);
 camera.position.set(0, 30, 250);
@@ -329,8 +329,11 @@ function boot(){
   const loader = document.querySelector('.loader');
   const bar = loader.querySelector('.bar i');
   const pct = loader.querySelector('.pct');
+  // ?nointro skips the loading animation (used for screenshots/tests)
+  const fast = /[?&]nointro/.test(location.search);
+  if (fast) loader.style.display = 'none';
   let p = 0;
-  const tick = setInterval(() => {
+  const tick = fast ? null : setInterval(() => {
     p = Math.min(100, p + 6 + Math.random() * 12);
     bar.style.right = (100 - p) + '%';
     pct.textContent = String(Math.floor(p)).padStart(3, '0') + ' %';
