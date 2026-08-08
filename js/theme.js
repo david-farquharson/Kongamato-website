@@ -23,9 +23,9 @@
     // terrain: glowing blue grid on dark (like the neon reference), dark "ink"
     // grid on the near-white light theme. terrainOp is the base line opacity.
     dark:  { clear:0x05070f, fog:0x05070f, ghost:0xffffff, accent:0xf6e500,
-             terrain:0x3f7bff, terrainOp:0.60, scrim:0x05070f, scrimOp:0.22, additive:true },
+             terrain:0x3f7bff, terrainOp:0.20, scrim:0x05070f, scrimOp:0.22, additive:true },
     light: { clear:0xeef1f6, fog:0xe8ecf2, ghost:0x2a3555, accent:0x8a6a00,
-             terrain:0x1b2130, terrainOp:0.48, scrim:0xffffff, scrimOp:0.10, additive:false }
+             terrain:0x1b2130, terrainOp:0.20, scrim:0xffffff, scrimOp:0.10, additive:false }
   };
 
   var mode = 'dark';

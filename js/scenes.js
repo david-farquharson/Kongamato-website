@@ -421,15 +421,15 @@ const SCENES = [
     id:'open_source', label:'open_source', title:'Open Source',
     body:'Everything Kongamato builds is released under Apache 2.0: the tools, the avionics, the airframe data. Below is the current state of the code, what we have validated it against, and where it breaks. We publish the limits alongside the capabilities because avionics that hold lives should be auditable by anyone who wants to check the work.  This page is a living document. It reflects what exists today, not what we intend to build.',
     copyPos:{ left:'300px', bottom:'300px' , maxWidth:'530px' },   // <-- this scene's text position
-    cuePos:{ right:'100px', bottom:'200px' },                    // <-- this scene's \"scroll to discover\" position
-    cam:[-6, 38, 320], look:[0, 6, -500], build:sceneInspect
+    cuePos:{ right:'100px', bottom:'200px' },  
+    cam:[6, 40, 235], look:[6, -4, -500], build:sceneInspect                  // <-- this scene's \"scroll to discover\" position
   },
   {
     id:'training', label:'training', title:'Training and STEM',
     body:'Aviation has a pipeline problem: the tools that teach real aircraft design are expensive, licensed, and locked to institutions that can afford them. Ours runs in a browser, offline, for free.<b>For students.</b> Design Studio puts the same sizing calculations used in professional practice; constraint diagrams, drag polars, V-n envelopes, stability derivatives, CFD; in front of any high school or college student with a laptop. No license, no install, no lab requirement. Paired with mentorship, it gives students a path from first sketch to a design they can defend. <b>For professionals.</b> Structured training across the full design-build cycle, from conceptual sizing through composite fabrication and systems integration, for engineers moving into experimental and unmanned aviation. Everything we build is released under Apache 2.0. Avionics that hold lives should be auditable by anyone who wants to check the work; and tools that teach should be available to anyone who wants to learn.',    //body:'Aviation has a pipeline problem: the tools that teach real aircraft design are expensive, licensed, and locked to institutions that can afford them. Ours runs in a browser, offline, for free.<br><br><b>For students.</b> Design Studio puts the same sizing calculations used in professional practice; constraint diagrams, drag polars, V-n envelopes, stability derivatives, CFD; in front of any high school or college student with a laptop. No license, no install, no lab requirement. Paired with mentorship, it gives students a path from first sketch to a design they can defend.<br><br><b>For professionals.</b> Structured training across the full design-build cycle, from conceptual sizing through composite fabrication and systems integration, for engineers moving into experimental and unmanned aviation.<br><br>Everything we build is released under Apache 2.0. Avionics that hold lives should be auditable by anyone who wants to check the work; and tools that teach should be available to anyone who wants to learn.',
     copyPos:{ Right:'200px', bottom:'140px', maxWidth:'630px' },   // <-- this scene's text position
     //cuePos:{ top:'-100px' },                 // <-- this scene's \"scroll to discover\" position
-    cam:[36, 40, 235], look:[6, -4, 0], build:sceneSimulate
+    cam:[6, 40, 235], look:[6, -4, -500], build:sceneSimulate
   }
 
 ];

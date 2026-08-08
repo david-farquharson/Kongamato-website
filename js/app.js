@@ -60,7 +60,7 @@ const osOverlay = document.getElementById('osscroll');
    and swung 45° horizontally, then smoothly eases to the resting framing.
    Driven in the render loop (real 3D) via revealClock; skipped with ?nointro. */
 const noIntro = /[?&]nointro/.test(location.search);
-const REVEAL_SECS = 3;
+const REVEAL_SECS = 1.3;
 let revealT = noIntro ? REVEAL_SECS : REVEAL_SECS;   // seconds elapsed (>=SECS ⇒ done)
 function playSceneReveal(){ if (!noIntro) revealT = 0; }
 const easeOutCubic = x => 1 - Math.pow(1 - x, 3);
@@ -288,8 +288,8 @@ function frame(now){
   // intro reveal progress (0..1): 1 = settled at rest
   if (revealT < REVEAL_SECS) revealT += dt;
   const rk = easeOutCubic(Math.min(1, revealT / REVEAL_SECS));
-  const revealRot  = (1 - rk) * (Math.PI / 8);   // 22.5° swing → 0
-  const revealZoom = (1 - rk) * 0.42;            // dolly 42% toward the scene → 0
+  const revealRot  = (1 - rk) * (Math.PI / 16);   // 22.5° swing → 0
+  const revealZoom = (1 - rk) * 0.82;            // dolly 42% toward the scene → 0
 
   // camera easing toward target + parallax
   smooth.x += (pointer.x - smooth.x) * .045;

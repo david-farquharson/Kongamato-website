@@ -22,8 +22,8 @@ scene.add(world);
 const env = buildEnvironment();
 world.add(env);
 
-/* Build the Training scene's terrain + aircraft and reveal it. */
-const g = sceneSimulate();
+/* Build the Training scene's terrain (aircraft removed) and reveal it. */
+const g = sceneCessnaTerrain({ aircraft:false, hoverBase: 28 });
 g.visible = true;
 world.add(g);
 if (g.userData.lazyLoad) g.userData.lazyLoad();
